@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='pyproject',
@@ -7,12 +7,12 @@ setup(
     author_email='loyalgoff@jhmi.edu',
     packages=['pyproject', 'pyproject.test'],
     scripts=[],
-    url='http://pypi.python.org/pypi/pyproject/',
-    license='LICENSE.txt',
+    url='http://github.com/gofflab/pyproject/',
+    license='MIT',
     description='Transfer learning framework for single cell gene expression analysis in Python',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     install_requires=[
-        "Django >= 1.1.1",  #Edit accordingly
-        "caldav == 0.1.4",  #
+        "scanpy >= 1.4",  #Edit accordingly
+        "anndata >= 0.6", #
     ],
 )
