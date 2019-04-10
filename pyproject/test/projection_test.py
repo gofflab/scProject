@@ -13,4 +13,4 @@ target = sc.read_h5ad('test_target.h5ad')
 target.var = target.var.set_index('gene_id')
 
 print("Doing projection...",file=sys.stderr)
-pyproject.projection.project(target,patterns)
+projection = pyproject.projection.project(target,patterns)
