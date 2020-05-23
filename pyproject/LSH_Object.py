@@ -11,7 +11,7 @@ class Hashing:
         self.num_buckets = num_buckets
         self.hashtable = [[] for _ in range(num_buckets)]
         self.random_vector = None
-        self.hash_vectors = sc.read(hash_vectors)
+        #self.hash_vectors = sc.read(hash_vectors)
 
     def hash_LSH_Random_Vectors(self):
         self.random_vector = np.random.rand(1, self.file.n_obs)
