@@ -41,23 +41,33 @@ class Hashing:
 
     def hash_multiple_times_Chosen(self, number_of_times):
         list_of_tables = []
+        list_of_clusters = []
         if number_of_times > self.hash_vectors.n_vars:
             number_of_times = self.hash_vectors.n_vars
         for i in range(number_of_times):
             hash_vector = self.hash_vectors.var_vector(i)
             list_of_tables.append(self.hash_LSH_Chosen_Vector(hash_vector))
-        return list_of_tables
+        # Find the clusters
+        for i in range(self.library.n_vars):  # iterate through all of the library vectors
+            cluster = list_of_tables[0][0][list_of_tables[0][1][i]]  # This is the first bucket
+            for j in range(1, len(list_of_tables)):  # iterate through the hash tables
+                cluster = cluster.intersect(list_of_tables[j][0][list_of_tables[j][1][i]])
+                list_of_clusters.append(cluster)
+        return list_of_clusters
 
-# I'm having some trouble figuring out how to do the intersection
     def hash_multiple_times_random(self, number_of_times):
         list_of_tables = []
         list_of_clusters = []
+        # Here we actually hash number_of_times
         for i in range(number_of_times):
             list_of_tables.append(self.hash_LSH_Random_Vectors())
-        for i in range(len(list_of_tables[0][1])):# is that correct?
-            # I do not know to take this intersection here
-
-        return list_of_clusters #the clusters with library vectors
+        # Find the clusters
+        for i in range(self.library.n_vars):  # iterate through all of the library vectors
+            cluster = list_of_tables[0][0][list_of_tables[0][1][i]] # This is the first bucket
+            for j in range(1, len(list_of_tables)):  # iterate through the hash tables
+                cluster = cluster.intersect(list_of_tables[j][0][list_of_tables[j][1][i]])
+                list_of_clusters.append(cluster)
+        return list_of_clusters  # the clusters with library vectors
 
 
 
