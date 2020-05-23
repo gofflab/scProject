@@ -21,6 +21,7 @@ def insertToTable(table, vector, random_vector, bucket_width):
 # param buckets-the size of the hashtable
 # param library_file name of the anndata object holding the library file
 # returns a hashtable(w/ chaining) and which buckets contain the library
+# this method is not used now that I made a hashing object
 def hash_entire_dataset(file, buckets, library_file):
     ad = sc.read(file)
     library = sc.read(library_file)
