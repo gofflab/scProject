@@ -10,10 +10,17 @@ import scanpy as sc
 # param random_vector-the random_vector that we are projecting onto for that round of hashing
 # param bucket_width-the sensitivity
 # return it is void but it inserts the vector into the hashtable
-def insertToTable(table, vector, random_vector, bucket_width):
-    hash_index = np.floor(np.dot(vector, random_vector) / bucket_width)
+def insertToTable(table, vector, random_vector, bucket_width,):
+    print("inserting")
+    print(vector)
+    print(random_vector)
+    print("printed")
+    hash_index: int = int(np.floor(np.dot(list(vector), list(random_vector)) / bucket_width))
+    print(str(hash_index) + "hash index")
     table[hash_index].append(vector)
+    print("done insertion")
     return hash_index % len(table)
+
 
 
 # This method hashes the new dataset and the library
