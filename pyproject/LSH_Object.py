@@ -15,17 +15,18 @@ class Hashing:
             self.hash_vectors = sc.read(hash_vectors)
 
     def hash_LSH_Random_Vectors(self):
-        self.random_vector = np.random.rand(self.library.n_vars, 1)
+        self.random_vector = np.random.rand(self.library.n_obs)
+        print(len(self.random_vector))
         hashtable = [[] for _ in range(self.num_buckets)]
         library_indices = []
         for i in range(self.library.n_vars):
-            print("hashing")
-            vec_lib = self.library.X[:][i]
+            vec_lib = self.library.X.transpose()[i]
+            print(vec_lib.shape)
             index = insertToTable(self.hashtable, vec_lib, self.random_vector, self.bucket_width)
             library_indices.append(index)
-            print("done table")
+        print("yay")
         for i in range(self.file.n_vars):
-            vec = self.file.X[:][i]
+            vec = self.file.X.transpose()[i]
             insertToTable(self.hashtable, vec, self.random_vector, self.bucket_width)
         return hashtable, library_indices
 
@@ -33,11 +34,11 @@ class Hashing:
         hashtable = [[] for _ in range(self.num_buckets)]
         library_indices = []
         for i in range(self.library.n_vars):
-            vec_lib = self.library.X[:][i]
+            vec_lib = self.library.X.transpose()[i]
             index = insertToTable(self.hashtable, vec_lib, hash_vector, self.bucket_width)
             library_indices.append(index)
         for i in range(self.file.n_vars):
-            vec = self.file.X[:][i]
+            vec = self.file.X.transpose()[i]
             insertToTable(self.hashtable, vec, hash_vector, self.bucket_width)
 
         return hashtable, library_indices
@@ -48,7 +49,7 @@ class Hashing:
         if number_of_times > self.hash_vectors.n_vars:
             number_of_times = self.hash_vectors.n_vars
         for i in range(number_of_times):
-            hash_vector = self.hash_vectors.X[:][i]
+            hash_vector = self.hash_vectors.X.transpose()[i]
             list_of_tables.append(self.hash_LSH_Chosen_Vector(hash_vector))
         # Find the clusters
         for i in range(self.library.n_vars):  # iterate through all of the library vectors
