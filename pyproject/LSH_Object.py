@@ -62,6 +62,7 @@ class Hashing:
     def hash_multiple_times_random(self, number_of_times):
         list_of_tables = []
         list_of_clusters = []
+
         # Here we actually hash number_of_times
         for i in range(number_of_times):
             print("enter loop")
