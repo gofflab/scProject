@@ -8,13 +8,12 @@ from sklearn.decomposition import NMF
 from . import matcher
 
 
-
 class Pattern(AnnData):
     pass
 
 
 def project(adata, patterns, method="linReg", verbose=True):
-    if (method == "linReg"):
+    if method == "linReg":
         return project_linreg_(adata, patterns, verbose=verbose)
     else:
         pass
@@ -35,15 +34,12 @@ def project_linreg_(adata, patterns, verbose=True):
 
     lm = linear_model.LinearRegression()
     lm.fit(patterns_filtered.X.T, adata_filtered.X.T)
-    return (lm)
+    return lm
 
 
 def project_NMF(adata, rank):
     model = NMF(n_components=rank, init='random', random_state=0)
-    array = np.absolute(adata.X.T)
-    print(array.shape)
-    A_Matrix = model.fit_transform(array)
+    # array = np.absolute(adata.X.T)
+    A_Matrix = model.fit_transform(adata.X.T)
     print(A_Matrix.shape)
     return A_Matrix
-
-
