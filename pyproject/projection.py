@@ -43,3 +43,19 @@ def project_NMF(adata, rank):
     A_Matrix = model.fit_transform(adata.X.T)
     print(A_Matrix.shape)
     return A_Matrix
+
+
+def non_negative_lin_reg(adata, patterns, alpha, L1, verbose=True):
+    overlap = matcher.getOverlap(adata, patterns)
+    if verbose:
+        print("# of overlapping genes: %d" % (len(overlap)))
+    adata_filtered = matcher.filterSource(adata, overlap)
+    if verbose:
+        print("Filtered Source Dataset:\n" + repr(adata_filtered))
+
+    patterns_filtered = matcher.filterPatterns(patterns, overlap)
+    if verbose:
+        print("Filtered Pattern Set:\n" + repr(patterns_filtered))
+    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, positive=True)
+    model.fit(patterns_filtered.X.T, adata_filtered.X.T)
+    return model
