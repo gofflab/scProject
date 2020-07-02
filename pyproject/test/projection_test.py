@@ -14,3 +14,5 @@ target.var = target.var.set_index('gene_id')
 
 print("Doing projection...",file=sys.stderr)
 projection = pyproject.projection.project(target,patterns)
+
+project_positive = non_negative_lin_reg(target, patterns, .1, .1, verbose=False)
