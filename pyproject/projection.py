@@ -46,6 +46,20 @@ def project_NMF(adata, rank):
 
 
 def non_negative_lin_reg(adata, patterns, alpha, L1, verbose=True):
+
+    color = adata.obs['CellType'].replace({'Astrocyte/Radial Glia': 0,
+                                           'Brain Fibroblasts': 1,
+                                           'Cycling Neural Progenitor': 2,
+                                           'DARPP-32 cells': 3,
+                                           'Excitatory Neurons': 4,
+                                           'Oligodendrocyte': 5,
+                                           'Unknown': 6,
+                                           'Vascular Endothelium': 7,
+                                           'Vascular Smooth Muscle': 8,
+                                           'Interneurons': 9,
+                                           'Doublets': 10,
+                                           'Microglia': 11})
+
     overlap = matcher.getOverlap(adata, patterns)
     if verbose:
         print("# of overlapping genes: %d" % (len(overlap)))
@@ -56,6 +70,25 @@ def non_negative_lin_reg(adata, patterns, alpha, L1, verbose=True):
     patterns_filtered = matcher.filterPatterns(patterns, overlap)
     if verbose:
         print("Filtered Pattern Set:\n" + repr(patterns_filtered))
-    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, positive=True)
+    print(adata_filtered.X.T.shape, "full dataset")
+    print(patterns_filtered.X.T.shape, "A-Matrix")
+
+    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, positive=True, max_iter=10000)
+    # model_Lasso = linear_model.Lasso(alpha=alpha, positive=True)
+    # model_Lasso.fit(adata_filtered.X.T, patterns_filtered.X.T)
     model.fit(patterns_filtered.X.T, adata_filtered.X.T)
+    print(model.coef_.shape, "pattern M shape")
+    print(model.coef_.dtype)
+    col_21 = model.coef_.T[20][:]
+    print(col_21.shape)
+    ints = col_21.astype('int64')
+
+    umap_obj = umap.UMAP(n_neighbors=75)
+    nd = umap_obj.fit_transform(model.coef_)
+    print(nd.shape, "umap shape")
+
+    plt.scatter(nd[:, 0], nd[:, 1],
+                c=[sns.color_palette("Paired", n_colors=12)[x] for x in color], s=5)
+    plt.title("UMAP projection of pattern matrix", fontsize=24)
+    plt.show()
     return model
