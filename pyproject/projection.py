@@ -74,8 +74,6 @@ def non_negative_lin_reg(adata, patterns, alpha, L1, verbose=True):
     print(patterns_filtered.X.T.shape, "A-Matrix")
 
     model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, positive=True, max_iter=10000)
-    # model_Lasso = linear_model.Lasso(alpha=alpha, positive=True)
-    # model_Lasso.fit(adata_filtered.X.T, patterns_filtered.X.T)
     model.fit(patterns_filtered.X.T, adata_filtered.X.T)
     print(model.coef_.shape, "pattern M shape")
     print(model.coef_.dtype)
