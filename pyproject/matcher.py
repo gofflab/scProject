@@ -4,6 +4,8 @@
 # Feature matching/mapping between source (annData) and target (patterns) datasets
 ##################
 import anndata as ad
+import pandas as pd
+import numpy as np
 
 
 # class SourceTypeError(AssertionError):
@@ -32,3 +34,11 @@ def filterPatterns(patterns, overlap):
     patterns_filtered = patterns[:, overlap]
     assert patterns_filtered.shape[1] > 0
     return patterns_filtered
+
+
+def mapCellNamesToInts(adata, cellTypeColumnName):
+    print(adata.obs[cellTypeColumnName].unique())
+    ziper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))
+    dictionary = dict(ziper)
+    new_obs = adata.obs[cellTypeColumnName].replace(dictionary)
+    return new_obs

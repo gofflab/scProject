@@ -8,38 +8,39 @@ import umap
 
 
 class projection:
-    def __init__(self, dataset, patterns, cellTypeColumnName):
+    def __init__(self, dataset, patterns, cellTypeColumnName, genecolumnname, num_cell_types):
         self.dataset = dataset
         self.patterns = patterns
-        overlap = matcher.getOverlap(dataset, patterns)
-        self.dataset_filtered = matcher.filterSource(dataset, overlap)
-        self.patterns.filtered = matcher.filterPatterns(patterns, overlap)
+        dataset.var = dataset.var.set_index(genecolumnname)
+        overlap = dataset.var.index.intersection(patterns.var.index)
+        self.dataset_filtered = dataset[:, overlap]
+        print(self.dataset_filtered.shape, "dataset filter shape")
+        self.patterns_filtered = patterns[:, overlap]
+        print(self.patterns_filtered.shape, "patterns filter shape")
         self.cellTypeColumnName = cellTypeColumnName
         self.model = None
         self.pearsonMatrix = None
-        self.num_cell_types = (self.dataset_filtered.obs[cellTypeColumnName].unique()).shape[0]
+        self.num_cell_types = num_cell_types
         self.num_patterns = patterns.X.shape[0]
         self.UMAP_COORD = None
 
     def non_neg_lin_reg(self, alpha, L1, iterations=10000):
         model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations)
-        model.fit(self.patterns.filtered.X.T, self.dataset_filtered.X.T)
+        model.fit(self.patterns_filtered.X.T, self.dataset_filtered.X.T)
         self.model = model
-        return model
 
     def pearsonPlot(self, plot=True):
         color = matcher.mapCellNamesToInts(self.dataset_filtered, self.cellTypeColumnName)
-        binarized = np.zeros(color.unique().shape[0], color.shape[0])
-        pearson_matrix = np.empty(color.shape[0], color.unique().shape[0])
+        matrix = np.zeros([self.num_cell_types, color.shape[0]])
+        pearson_matrix = np.empty([self.patterns_filtered.X.shape[0], self.num_cell_types])
         for i in range(color.shape[0]):
             cell_type = color[i]
-            binarized[cell_type][i] = 1
-        for i in range(self.dataset.X.shape[0]):
+            matrix[cell_type][i] = 1
+        for i in range(self.patterns_filtered.X.shape[0]):
             pattern = np.transpose(self.model.coef_)[:][i]
             for j in range(color.unique().shape[0]):
-                cell_type = binarized[j]
+                cell_type = matrix[j]
                 correlation = stats.pearsonr(pattern, cell_type)
-                corr_np = np.corrcoef(pattern, cell_type)
                 pearson_matrix[i][j] = correlation[0]
         self.pearsonMatrix = pearson_matrix
         if plot:
@@ -47,11 +48,13 @@ class projection:
             graphic = sns.heatmap(pearson_matrix)
             plt.show()
 
-    def UMAP_Projection(self, n_neighbors, metric='euclidean', plot=True, color="Paired", point_size=.5):
+    def UMAP_Projection(self, n_neighbors=10, metric='euclidean', plot=True, color="Paired"):
+        color = matcher.mapCellNamesToInts(self.dataset_filtered, self.cellTypeColumnName)
         umap_obj = umap.UMAP(n_neighbors=n_neighbors, metric=metric)
-        nd = umap_obj.fit(self.model.coef_)
+        nd = umap_obj.fit_transform(self.model.coef_)
         if plot:
-            plt.scatter(nd[:, 0], nd[:, 1], c=[sns.color_palette(color, n_colors=12)[x] for x in color], s=point_size)
+            plt.scatter(nd[:, 0], nd[:, 1],
+                        c=[sns.color_palette("Paired", n_colors=12)[x] for x in color], s=.5)
             plt.title("UMAP Projection of Pattern Matrix", fontsize=24)
             plt.show()
         self.UMAP_COORD = nd
