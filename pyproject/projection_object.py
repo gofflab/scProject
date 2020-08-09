@@ -6,6 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import umap
 import anndata as ad
+from scipy.optimize import nnls
 import scanpy as sc
 
 
@@ -83,10 +84,20 @@ def filterAnnDatas(dataset, patterns, geneColumnName):
     return dataset_filtered, patterns_filtered
 
 
-def non_neg_lin_reg(dataset_filtered, patterns_filtered, projectionName, alpha, L1, iterations=10000):
+def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, L1, iterations=10000):
     model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations)
     model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
     dataset_filtered.obsm[projectionName] = model.coef_
+    print(model.coef_.shape)
+
+
+def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
+    print(patterns_filtered.X.shape[0], "patterns", dataset_filtered.X.T.shape[1], "data")
+    pattern_matrix = np.zeros([patterns_filtered.X.shape[0], dataset_filtered.X.T.shape[1]])
+    for i in range(dataset_filtered.shape[1]):
+        pattern_matrix[:, i] = nnls(patterns_filtered.X.T, dataset_filtered.X.T[:, i])[0]
+    print(pattern_matrix.shape)
+    dataset_filtered.obsm[projectionName] = np.transpose(pattern_matrix)
 
 
 def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
