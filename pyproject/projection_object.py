@@ -5,8 +5,11 @@ from scipy import stats
 import seaborn as sns
 import matplotlib.pyplot as plt
 import umap
+import anndata as ad
+import scanpy as sc
 
 
+# Super Class
 class projection:
     def __init__(self, dataset, patterns, cellTypeColumnName, genecolumnname, num_cell_types):
         self.dataset = dataset
@@ -67,3 +70,75 @@ class projection:
             plt.colorbar()
             print(np.count_nonzero(feature))
             plt.show()
+
+
+# Here I refactored the code to take in AnnData Objects
+def filterAnnDatas(dataset, patterns, geneColumnName):
+    dataset.var = dataset.var.set_index(geneColumnName)
+    overlap = dataset.var.index.intersection(patterns.var.index)
+    dataset_filtered = dataset[:, overlap]
+    print(dataset_filtered.shape, "dataset filter shape")
+    patterns_filtered = patterns[:, overlap]
+    print(patterns_filtered.shape, "patterns filter shape")
+    return dataset_filtered, patterns_filtered
+
+
+def non_neg_lin_reg(dataset_filtered, patterns_filtered, projectionName, alpha, L1, iterations=10000):
+    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations)
+    model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
+    dataset_filtered.obsm[projectionName] = model.coef_
+
+
+def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
+                  plot):
+    color = matcher.mapCellNamesToInts(dataset_filtered, cellTypeColumnName)
+    matrix = np.zeros([num_cell_types, color.shape[0]])
+    pearson_matrix = np.empty([patterns_filtered.X.shape[0], num_cell_types])
+    for i in range(color.shape[0]):
+        cell_type = color[i]
+        matrix[cell_type][i] = 1
+    for i in range(patterns_filtered.X.shape[0]):
+        pattern = np.transpose(dataset_filtered.obsm[projectionName])[:][i]
+        for j in range(color.unique().shape[0]):
+            cell_type = matrix[j]
+            correlation = stats.pearsonr(pattern, cell_type)
+            pearson_matrix[i][j] = correlation[0]
+            dataset_filtered.uns[plotName] = pearson_matrix
+    # dataset_filtered.obsm['Pearson'] = pearson_matrix
+    if plot:
+        pearsonViz(dataset_filtered, plotName)
+
+
+def pearsonViz(dataset_filtered, plotName):
+    plt.title("Pearson Plot", fontsize=24)
+    graphic = sns.heatmap(dataset_filtered.uns[plotName])
+    plt.show()
+
+
+def UMAP_Projection(dataset_filtered, cellTypeColumnName, projectionName, UMAPName, n_neighbors, metric='euclidean',
+                    plot=True, color='Paired'):
+    color = matcher.mapCellNamesToInts(dataset_filtered, cellTypeColumnName)
+    umap_obj = umap.UMAP(n_neighbors=n_neighbors, metric=metric)
+    nd = umap_obj.fit_transform(dataset_filtered.obsm[projectionName])
+    if plot:
+        plt.scatter(nd[:, 0], nd[:, 1],
+                    c=[sns.color_palette("Paired", n_colors=12)[x] for x in color], s=.5)
+        plt.title("UMAP Projection of Pattern Matrix", fontsize=24)
+        plt.show()
+    dataset_filtered.obsm[UMAPName] = nd
+
+
+def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
+    for i in range(num_patterns):
+        pattern_matrix = dataset_filtered.obsm[projectionName]
+        feature = pattern_matrix[:, i]
+        plt.title("Feature " + str(i + 1), fontsize=24)
+        plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature, cmap='jet',
+                    s=.5)
+        plt.colorbar()
+        print(np.count_nonzero(feature))
+        plt.show()
+
+
+def saveProjections(dataset_filtered, datasetFileName):
+    dataset_filtered.write.h5ad(datasetFileName)

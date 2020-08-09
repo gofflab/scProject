@@ -1,4 +1,4 @@
-import pyproject
+
 from pyproject import projection_object
 import numpy as np
 import pandas as pd
@@ -18,9 +18,9 @@ print(dataset.X.shape, "Target shape")
 # print("Doing projection...",file=sys.stderr)
 # projection = pyproject.projection.project(target,patterns)
 
-object = projection_object.projection(dataset, patterns, 'CellType', 'gene_id', 12)
-object.non_neg_lin_reg(.01, .01)
-object.pearsonPlot()
-object.UMAP_Projection()
-object.featurePlots()
+dataset_filtered, patterns_filtered = projection_object.filterAnnDatas(dataset, patterns, 'gene_id')
+projection_object.non_neg_lin_reg(dataset_filtered, patterns_filtered, 'retinaProject', .01, .01)
+projection_object.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina', True)
+projection_object.UMAP_Projection(dataset_filtered, 'CellType', 'retinaProject', 'retinaUMAP', 10)
+projection_object.featurePlots(dataset_filtered, 12, 'retinaProject', 'retinaUMAP')
 
