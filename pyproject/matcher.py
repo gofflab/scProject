@@ -38,7 +38,7 @@ def filterPatterns(patterns, overlap):
 
 def mapCellNamesToInts(adata, cellTypeColumnName):
     print(adata.obs[cellTypeColumnName].unique())
-    ziper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))
-    dictionary = dict(ziper)
+    zipper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))
+    dictionary = dict(zipper)
     new_obs = adata.obs[cellTypeColumnName].replace(dictionary)
     return new_obs
