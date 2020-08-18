@@ -36,6 +36,13 @@ def filterPatterns(patterns, overlap):
     return patterns_filtered
 
 
+# Parameters
+# adata : AnnData object
+# cellTypeColumnName : index of the cell types in .obs
+# Return-void
+# Purpose of the Method:
+# This method performs an elastic net regression from Sklearn. The "discovered" pattern matrix is stored in
+# the dataset_filtered.obsm under the paramater projectionName
 def mapCellNamesToInts(adata, cellTypeColumnName):
     print(adata.obs[cellTypeColumnName].unique())
     zipper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))

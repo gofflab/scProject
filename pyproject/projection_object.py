@@ -8,7 +8,7 @@ from sklearn import linear_model
 from . import matcher
 
 
-# Super Class
+# Super Class- Not in use all refactored below
 class projection:
     def __init__(self, dataset, patterns, cellTypeColumnName, genecolumnname, num_cell_types):
         self.dataset = dataset
@@ -71,10 +71,16 @@ class projection:
             plt.show()
 
 
-# Here I refactored the code to take in AnnData Objects
+# Parameters
+# dataset : Anndata object cells x genes
+# patterns : Anndata object features x genes
+# Return
+# Returns a tuple of the two filtered AnnData objects
+# Purpose of the Method:
+# The point of this method is to only use the overlapping genes of the two anndata objects
 def filterAnnDatas(dataset, patterns, geneColumnName):
-    matcher.sourceIsValid(dataset)
-    matcher.sourceIsValid(patterns)
+    matcher.sourceIsValid(dataset)  # Make sure dataset is an AnnData object
+    matcher.sourceIsValid(patterns)  # Make sure patterns is an AnnData object
     dataset.var = dataset.var.set_index(geneColumnName)
     overlap = dataset.var.index.intersection(patterns.var.index)
     dataset_filtered = dataset[:, overlap]
@@ -84,15 +90,38 @@ def filterAnnDatas(dataset, patterns, geneColumnName):
     return dataset_filtered, patterns_filtered
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# patterns_filtered : Anndata object features x genes
+# projectionName : String which is the index of the projection in obsm
+# alpha : regularization parameter
+# L1 : regularization parameter
+# iterations : number of iterations while doing the regression
+# Return-void
+# Purpose of the Method:
+# This method performs an elastic net regression from Sklearn. The "discovered" pattern matrix is stored in
+# the dataset_filtered.obsm under the paramater projectionName
 def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, L1, iterations=10000):
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
-    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations)
+    model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=True)
     model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
     dataset_filtered.obsm[projectionName] = model.coef_
     print(model.coef_.shape)
 
 
+# still experimenting with this but same idea as NNLR_Elastic net, but implements a lasso regression instead
+def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alpha, iterations=10000):
+    matcher.sourceIsValid(dataset_filtered)
+    matcher.sourceIsValid(patterns_filtered)
+    model = linear_model.Lasso(alpha=alpha, max_iter=iterations, positive=True)
+    model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
+    dataset_filtered.obsm[projectionName] = model.coef_
+    print(model.coef_.shape)
+
+
+# still experimenting with this but same idea as NNLR_Elastic net, but implements ordinary least squares from scipy no
+# regularization
 def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
@@ -108,6 +137,18 @@ def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
     dataset_filtered.obsm[projectionName] = np.transpose(pattern_matrix)
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# patterns_filtered : Anndata object features x genes
+# cellTypeColumnName : String which is where the celltype data is stored
+# num_cell_types : String the number of cell types in the dataset this parameter could be removed
+# projectionName : String The name of the projection created using one of the regression matrices
+# plotName : String the name of pearson matrix is the index for the pearson matrix in .uns this parameter could probably
+# have a more informative name
+# plot : boolean if True a plot is displayed
+# Return-void
+# Purpose of the Method:
+# This method find the pearson correlation coefficient between every pattern and every cell type
 def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
                   plot):
     matcher.sourceIsValid(dataset_filtered)
@@ -124,12 +165,15 @@ def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_c
             cell_type = matrix[j]
             correlation = stats.pearsonr(pattern, cell_type)
             pearson_matrix[i][j] = correlation[0]
-            dataset_filtered.uns[plotName] = pearson_matrix
-    # dataset_filtered.obsm['Pearson'] = pearson_matrix
+    dataset_filtered.uns[plotName] = pearson_matrix
     if plot:
         pearsonViz(dataset_filtered, plotName)
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# plotName : String index of pearson matrix to visualize
+# Return -void
 def pearsonViz(dataset_filtered, plotName):
     matcher.sourceIsValid(dataset_filtered)
     plt.title("Pearson Plot", fontsize=24)
@@ -137,6 +181,22 @@ def pearsonViz(dataset_filtered, plotName):
     plt.show()
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# cellTypeColumnName : String index for cell type in dataset_filtered
+# projectionName : String which is the name of the projection in obsm
+# UMAPName : String index for the UMAP in dataset_filtered in obsm
+# n_neighbors : int number of neighbors for the UMAP (side note: I understand what this parameter does, but I do not
+# understand for instance how many neighbors to recommend) Another question might be like how do we know a UMAP is good
+# metric : String the distance metric (I have not experimented with this, but I have heard that euclidean breaks down in
+# higher dimensions. Maybe, trying some other metrics could be interesting.)
+# plot : boolean for whether to plot the UMAP
+# color : String for what color scheme to use this could become a potential issue with more and more cell types
+# pointSize : double size of the points on the visualization only used if plot is True
+# Return-void
+# Purpose of the Method:
+# This method performs an elastic net regression from Sklearn. The "discovered" pattern matrix is stored in
+# the dataset_filtered.obsm under the paramater projectionName
 def UMAP_Projection(dataset_filtered, cellTypeColumnName, projectionName, UMAPName, n_neighbors, metric='euclidean',
                     plot=True, color='Paired', pointSize=.5):
     matcher.sourceIsValid(dataset_filtered)
@@ -148,6 +208,14 @@ def UMAP_Projection(dataset_filtered, cellTypeColumnName, projectionName, UMAPNa
         UMAP_Viz(dataset_filtered, UMAPName, color, pointSize)
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# UMAP Name : String index for the UMAP
+# color : String color scheme
+# pointSize : double for the size of the points
+# Return-void
+# Purpose of the Method:
+# Visualize the UMAP of the "discovered" pattern matrix
 def UMAP_Viz(dataset_filtered, UMAPName, color='Paired', pointSize=.5):
     matcher.sourceIsValid(dataset_filtered)
     nd = dataset_filtered.obsm[UMAPName]
@@ -157,6 +225,14 @@ def UMAP_Viz(dataset_filtered, UMAPName, color='Paired', pointSize=.5):
     plt.show()
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# num_patterns : int the number of the patterns (this could probably be removed)
+# projectionName : String which is the index of the projection in obsm
+# UMAPName : String index of the UMAP in obsm
+# Return-void
+# Purpose of the Method:
+# This creates plots showing the amount of each feature in each cell.
 def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
     matcher.sourceIsValid(dataset_filtered)
     for i in range(num_patterns):
@@ -167,12 +243,18 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
                     s=.5)
         plt.colorbar()
         print("Number of nonzero cells " + str(np.count_nonzero(feature)))
-        print("Percentage of nonzero cells " + str((np.count_nonzero(feature)/dataset_filtered.shape[0])*100))
+        print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
         print("Max coefficient " + str(np.max(feature)))
         print("Average coefficient " + str(np.mean(feature)))
         plt.show()
 
 
+# Parameters
+# dataset_filtered : Anndata object cells x genes
+# datasetFileName : String fileName
+# Return - void
+# Purpose of the method:
+# Not sure if this is necessary, but it just saves the dataset with all of the new annotations
 def saveProjections(dataset_filtered, datasetFileName):
     matcher.sourceIsValid(dataset_filtered)
     dataset_filtered.write.h5ad(datasetFileName)
