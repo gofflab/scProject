@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'PyProject'
+project = 'ProjectPy'
 copyright = "2020, Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 author = "Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 
