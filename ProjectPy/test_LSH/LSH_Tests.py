@@ -1,6 +1,6 @@
 import unittest
-import pyproject
-from pyproject.LSH_Object import Hashing
+import ProjectPy
+from ProjectPy.LSH_Object import Hashing
 
 
 def main():

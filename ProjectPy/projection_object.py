@@ -73,6 +73,7 @@ class projection:
 
 def filterAnnDatas(dataset, patterns, geneColumnName):
     """ This method filters the patterns and the dataset to only include overlapping genes
+
     :param dataset: Anndata object cells x genes
     :type dataset: AnnData object
     :param patterns: Anndata object features x genes
@@ -142,20 +143,20 @@ def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
 
 def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
                   plot):
-    """
-    This method find the pearson correlation coefficient between every pattern and every cell type
+    """This method find the pearson correlation coefficient between every pattern and every cell type
+
     :param dataset_filtered: Anndata object cells x genes
     :param patterns_filtered: Anndata object features x genes
     :param cellTypeColumnName: index where the cell types are stored in dataset_filtered.obsm
     :param num_cell_types: The number of cell types in the dataset this parameter could be removed
     :param projectionName: The name of the projection created using one of the regression methods
-    :param plotName:The index for the pearson matrix in dataset_filtered.uns[plotName]
+    :param plotName: The index for the pearson matrix in dataset_filtered.uns[plotName]
     :param plot: If True a plot is displayed
     :type plot: boolean
     :type projectionName: String
     :type num_cell_types: int
     :type cellTypeColumnName: String
-    :return:void
+    :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
@@ -225,7 +226,7 @@ def UMAP_Viz(dataset_filtered, UMAPName, color='Paired', pointSize=.5):
     :param UMAPName: index for the UMAP in dataset_filtered.obsm
     :param color: seaborn color scheme, defaults to Paired
     :param pointSize: size of the points, defaults to .5
-    :return:
+    :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
     nd = dataset_filtered.obsm[UMAPName]

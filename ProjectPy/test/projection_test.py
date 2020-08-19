@@ -1,4 +1,4 @@
-from pyproject import projection_object
+from ProjectPy import projection_object
 import numpy as np
 import pandas as pd
 import scanpy as sc
@@ -14,7 +14,7 @@ print(dataset.X.shape, "Target shape")
 # target.var = target.var.set_index('gene_id')
 
 # print("Doing projection...",file=sys.stderr)
-# projection = pyproject.projection.project(target,patterns)
+# projection = ProjectPy.projection.project(target,patterns)
 
 
 dataset_filtered, patterns_filtered = projection_object.filterAnnDatas(dataset, patterns, 'gene_id')

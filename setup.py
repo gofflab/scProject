@@ -5,7 +5,7 @@ setup(
     version='0.1.0',
     author='Loyal A. Goff',
     author_email='loyalgoff@jhmi.edu',
-    packages=['ProjectPy', 'pyproject.test'],
+    packages=['ProjectPy', 'ProjectPy.test'],
     scripts=[],
     url='http://github.com/gofflab/pyproject/',
     license='MIT',

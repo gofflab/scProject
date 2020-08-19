@@ -1,6 +1,6 @@
 import scanpy as sc
 import numpy as np
-from pyproject.LSHMethods import insertToTable
+from ProjectPy.LSHMethods import insertToTable
 
 
 class Hashing:

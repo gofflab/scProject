@@ -5,7 +5,7 @@
 
 Welcome to PyProject's documentation!
 =====================================
-.. automodule:: pyproject.projection_object
+.. automodule:: ProjectPy.projection_object
    :members:
 
 
