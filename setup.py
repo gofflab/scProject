@@ -1,11 +1,11 @@
 from setuptools import setup
 
 setup(
-    name='pyproject',
+    name='ProjectPy',
     version='0.1.0',
     author='Loyal A. Goff',
     author_email='loyalgoff@jhmi.edu',
-    packages=['pyproject', 'pyproject.test'],
+    packages=['ProjectPy', 'pyproject.test'],
     scripts=[],
     url='http://github.com/gofflab/pyproject/',
     license='MIT',
