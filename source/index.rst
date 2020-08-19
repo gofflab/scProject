@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyProject's documentation!
+Welcome to ProjectPy's documentation!
 =====================================
 .. automodule:: ProjectPy.projection_object
    :members:
