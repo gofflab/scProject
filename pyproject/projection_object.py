@@ -147,14 +147,14 @@ def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_c
     :param dataset_filtered: Anndata object cells x genes
     :param patterns_filtered: Anndata object features x genes
     :param cellTypeColumnName: index where the cell types are stored in dataset_filtered.obsm
-    :type cellTypeColumnName: String
     :param num_cell_types: The number of cell types in the dataset this parameter could be removed
-    :type num_cell_types: int
     :param projectionName: The name of the projection created using one of the regression methods
-    :type String
     :param plotName:The index for the pearson matrix in dataset_filtered.uns[plotName]
     :param plot: If True a plot is displayed
     :type plot: boolean
+    :type projectionName: String
+    :type num_cell_types: int
+    :type cellTypeColumnName: String
     :return:void
     """
     matcher.sourceIsValid(dataset_filtered)

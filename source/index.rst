@@ -5,9 +5,9 @@
 
 Welcome to PyProject's documentation!
 =====================================
-
-.. automodule:: PyProject.projection_object.py
+.. automodule:: pyproject.projection_object
    :members:
+
 
 .. toctree::
    :maxdepth: 2
