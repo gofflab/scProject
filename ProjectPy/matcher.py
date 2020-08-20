@@ -4,8 +4,6 @@
 # Feature matching/mapping between source (annData) and target (patterns) datasets
 ##################
 import anndata as ad
-import pandas as pd
-import numpy as np
 
 
 # class SourceTypeError(AssertionError):
