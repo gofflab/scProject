@@ -116,7 +116,7 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
 
 # still experimenting with this but same idea as NNLR_Elastic net, but implements a lasso regression instead
 def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alpha, iterations=10000):
-    """
+    """This method performs a positive lasso regression from sci-kit learn.
 
     :param dataset_filtered: AnnData object cells x genes
     :param patterns_filtered: AnnData object features x genes
@@ -136,7 +136,7 @@ def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alp
 # still experimenting with this but same idea as NNLR_Elastic net, but implements ordinary least squares from scipy no
 # regularization
 def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
-    """
+    """This performs a non negative least squares regression using Scipy.
 
     :param dataset_filtered: AnnData object cells x genes
     :param patterns_filtered: AnnData object features x genes
