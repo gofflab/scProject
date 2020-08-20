@@ -19,6 +19,6 @@ setup(
         "seaborn >= 0.10.0",  #
         "matplotlib >= 3.1.3",
         "umap-learn >=0.4.0",
-        "sklearn>=0.22.1",
+        "scikit-learn>=0.21.2",
     ],
 )

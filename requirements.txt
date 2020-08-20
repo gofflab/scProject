@@ -8,4 +8,4 @@ seaborn~=0.10.0
 matplotlib~=3.2.2
 sphinx_rtd_theme~=0.4.3
 umap-learn~=0.4.6
-sklearn~=0.22.1
+sklearn~=0.23
