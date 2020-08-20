@@ -10,3 +10,4 @@ Utilities
 =========
 
 .. automodule:: ProjectPy.matcher
+    :members:
