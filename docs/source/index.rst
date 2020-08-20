@@ -5,10 +5,10 @@ Contents
 ^^^^^^^^
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-.. automodule:: ProjectPy.projection_object
-    :members:
+   contents
+
 
 
 
