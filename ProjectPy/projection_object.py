@@ -116,6 +116,15 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
 
 # still experimenting with this but same idea as NNLR_Elastic net, but implements a lasso regression instead
 def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alpha, iterations=10000):
+    """
+
+    :param dataset_filtered: AnnData object cells x genes
+    :param patterns_filtered: AnnData object features x genes
+    :param projectionName: index of the projection in dataset_filtered.obsm
+    :param alpha: regularization parameter
+    :param iterations: number of iterations while performing the regression
+    :return: void, the dataset_filtered is mutated and the projection is stored in dataset_filtered.obsm[projectionName]
+    """
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
     model = linear_model.Lasso(alpha=alpha, max_iter=iterations, positive=True)
@@ -127,6 +136,13 @@ def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alp
 # still experimenting with this but same idea as NNLR_Elastic net, but implements ordinary least squares from scipy no
 # regularization
 def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
+    """
+
+    :param dataset_filtered: AnnData object cells x genes
+    :param patterns_filtered: AnnData object features x genes
+    :param projectionName: index of the projection in dataset_filtered.obsm
+    :return: void, the dataset_filtered is mutated and the projection is stored in dataset_filtered.obsm[projectionName]
+    """
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
     print(patterns_filtered.X.shape[0], "patterns", dataset_filtered.X.T.shape[1], "data")

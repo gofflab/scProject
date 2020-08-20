@@ -13,6 +13,11 @@ import numpy as np
 # 	print("Source data must be a valid AnnData object")
 
 def sourceIsValid(adata):
+    """Checks whether adata is an AnnData object
+
+    :param adata: AnnData object
+    :return: SourceTypeError if adata is not an instance of an AnnData
+    """
     # Ensure source data is valid annData object
     try:
         assert isinstance(adata, ad.AnnData)
@@ -44,6 +49,12 @@ def filterPatterns(patterns, overlap):
 # This method performs an elastic net regression from Sklearn. The "discovered" pattern matrix is stored in
 # the dataset_filtered.obsm under the paramater projectionName
 def mapCellNamesToInts(adata, cellTypeColumnName):
+    """Maps each cell type to an integer. This is used as a helper for coloring plots
+
+    :param adata: AnnData object
+    :param cellTypeColumnName: index of where cell type is stored in adata.obs
+    :return:
+    """
     print(adata.obs[cellTypeColumnName].unique())
     zipper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))
     dictionary = dict(zipper)
