@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ProjectPy',
-    version='0.1.0',
+    version='0.1.1',
     author='Asher Baraban, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
     packages=['ProjectPy', 'ProjectPy.test'],
