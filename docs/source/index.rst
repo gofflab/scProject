@@ -8,7 +8,7 @@ Contents
    :maxdepth: 1
 
    :doc: ProjectPy API <contents>
-   Tutorial <tutorial.ipynb>
+   :ref: Tutorial <tutorial.ipynb>
 
 
 
