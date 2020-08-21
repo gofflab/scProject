@@ -11,8 +11,6 @@ Contents
    :ref: Tutorial <tutorial.ipynb>
 
 
-
-
 Indices and tables
 ==================
 
