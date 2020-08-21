@@ -6,16 +6,9 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-   contents
-   tutorial
 
-
-
-
-
-
-
-
+   ProjectPy API <contents>
+   Tutorial <tutorial>
 
 
 
