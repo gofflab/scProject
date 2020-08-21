@@ -7,8 +7,8 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   ProjectPy API <contents>
-   Tutorial <tutorial>
+   :role: ProjectPy API <contents>
+   :role: Tutorial <tutorial.ipynb>
 
 
 
