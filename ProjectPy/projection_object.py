@@ -194,7 +194,7 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
     for i in range(dataset_filtered.obs[cellTypeColumnName].unique().shape[0]):
         handles.append(mpatches.Patch(color=(sns.color_palette(colorScheme, n_colors=12)[i]),
                                       label=dataset_filtered.obs[cellTypeColumnName].unique()[i]))
-    plt.figlegend(handles=handles, title="Cell Types", fontsize='x-small', loc=4)
+    plt.legend(handles=handles, title="Cell Types", fontsize='xx-small', loc=4)
     plt.show()
 
 
