@@ -19,6 +19,6 @@ print(dataset.X.shape, "Target shape")
 
 dataset_filtered, patterns_filtered = projection_object.filterAnnDatas(dataset, patterns, 'gene_id')
 projection_object.NNLR_ElasticNet(dataset_filtered, patterns_filtered, 'retinaProject', alpha=.01, L1=.01)
-# projection_object.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina', True)
+projection_object.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina', True)
 projection_object.UMAP_Projection(dataset_filtered, 'CellType', 'retinaProject', 'retinaUMAP', 12)
 projection_object.featurePlots(dataset_filtered, 80, 'retinaProject', 'retinaUMAP')

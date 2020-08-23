@@ -4,7 +4,7 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='ProjectPy',
-    version='0.1.4',
+    version='0.1.6',
     author='Asher Baraban, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
     scripts=[],
