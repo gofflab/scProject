@@ -4,7 +4,7 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='ProjectPy',
-    version='0.1.6',
+    version='1.0.0',
     author='Asher Baraban, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
     scripts=[],
@@ -12,4 +12,7 @@ setup(
     license='MIT',
     description='Transfer learning framework for single cell gene expression analysis in Python',
     long_description=open('README.md').read(),
+    classifiers=[
+        'Development Status :: 3 - Alpha'
+    ]
 )
