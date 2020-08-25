@@ -1,7 +1,7 @@
 scProject
 ==========
 
-ProjectPy is a software package that allows biologists to use transfer learning to understand the usage of previously
+scProject is a software package that allows biologists to use transfer learning to understand the usage of previously
 discovered features in genomic datasets. Tools like NNMF allow biologists to find a set of vectors that linearly combine
 to approximately reconstruct a dataset. These features can have biological meaning as a pathway, cell type, gene
 program, cell feature etc.. ProjectPy leverages scikit-learn’s and scipy’s regression tools to effectively perform a
