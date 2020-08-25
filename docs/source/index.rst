@@ -1,5 +1,5 @@
-ProjectPy
-=========
+scProject
+==========
 
 ProjectPy is a software package that allows biologists to use transfer learning to understand the usage of previously
 discovered features in genomic datasets. Tools like NNMF allow biologists to find a set of vectors that linearly combine
@@ -16,7 +16,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   :doc: ProjectPy API <contents>
+   :doc: scProject API <contents>
    Tutorial <tutorial.ipynb>
 
 

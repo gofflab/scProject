@@ -20,7 +20,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'ProjectPy'
+project = 'scProject'
 copyright = "2020, Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 author = "Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 

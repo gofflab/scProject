@@ -1,13 +1,13 @@
-ProjectPy API
+scProject API
 =============
 
 
-.. automodule:: ProjectPy.projection_object
+.. automodule:: scProject.projection_object
     :members:
 
 
 Utilities
 =========
 
-.. automodule:: ProjectPy.matcher
+.. automodule:: scProject.matcher
     :members:

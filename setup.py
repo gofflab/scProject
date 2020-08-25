@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     packages=setuptools.find_packages(),
-    name='ProjectPy',
+    name='scProject',
     version='1.0.0',
     author='Asher Baraban, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
