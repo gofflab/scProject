@@ -202,8 +202,7 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
     """Creates plots which show the weight of each feature in each cell.
 
     :param dataset_filtered: Anndata object cells x genes
-    :param num_patterns: the number of the patterns. This can also take in a list of ints corresponding to features of
-     interest.
+    :param num_patterns: the number of the patterns to display starting from feature 1.
     :param projectionName: index of the projection in dataset_filtered.obsm
     :param UMAPName: index of the UMAP in dataset_filtered.obsm
     :return: void
