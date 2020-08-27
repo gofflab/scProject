@@ -4,8 +4,8 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='scProject',
-    version='1.0.0',
-    author='Asher Baraban, Loyal Goff',
+    version='1.0.1',
+    author='Asher Baraban, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
     scripts=[],
     url="https://github.com/gofflab/ProjectPy.git",

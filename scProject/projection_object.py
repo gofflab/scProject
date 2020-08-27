@@ -128,19 +128,27 @@ def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_c
             pearson_matrix[i][j] = correlation[0]
     dataset_filtered.uns[plotName] = pearson_matrix
     if plot:
-        pearsonViz(dataset_filtered, plotName)
+        pearsonViz(dataset_filtered, plotName, cellTypeColumnName)
 
 
-def pearsonViz(dataset_filtered, plotName):
+def pearsonViz(dataset_filtered, plotName, cellTypeColumnName):
     """ Visualize a Pearson Matrix.
 
     :param dataset_filtered: Anndata object cells x genes
     :param plotName: Index of pearson matrix to visualize
+    :param cellTypeColumnName: index for cell type in dataset_filtered.obsm
     :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
+    y_ticks = []
+    for i in range(dataset_filtered.uns[plotName].shape[0]):
+        y_ticks.append('Feature ' + str(i+1))
+
     plt.title("Pearson Plot", fontsize=24)
-    graphic = sns.heatmap(dataset_filtered.uns[plotName])
+    sns.heatmap(dataset_filtered.uns[plotName],
+                xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
+                yticklabels=y_ticks)
+    plt.tick_params(axis='y', labelsize=4)
     plt.show()
 
 
@@ -177,6 +185,7 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
     """Plots the UMAP of the pattern matrix. Make sure colorScheme has at least as many colors as cell types in your
     dataset.
 
+    :param cellTypeColumnName: index for cell type in dataset_filtered.obsm
     :param dataset_filtered: Anndata object cells x genes
     :param UMAPName: index for the UMAP in dataset_filtered.obsm
     :param colorScheme: seaborn color scheme, defaults to Paired
@@ -188,13 +197,14 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
     nd = dataset_filtered.obsm[UMAPName]
     plt.scatter(nd[:, 0], nd[:, 1],
                 c=[sns.color_palette(colorScheme,
-                n_colors=dataset_filtered.obs[cellTypeColumnName].unique().shape[0])[x] for x in color], s=pointSize)
+                                     n_colors=dataset_filtered.obs[cellTypeColumnName].unique().shape[0])[x] for x in
+                   color], s=pointSize)
     plt.title("UMAP Projection of Pattern Matrix", fontsize=24)
     handles = []
     for i in range(dataset_filtered.obs[cellTypeColumnName].unique().shape[0]):
         handles.append(mpatches.Patch(color=(sns.color_palette(colorScheme, n_colors=12)[i]),
                                       label=dataset_filtered.obs[cellTypeColumnName].unique()[i]))
-    plt.legend(handles=handles, title="Cell Types", fontsize='xx-small', loc=4)
+    plt.legend(handles=handles, title="Cell Types", fontsize='xx-small', loc='best')
     plt.show()
 
 
@@ -202,23 +212,74 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
     """Creates plots which show the weight of each feature in each cell.
 
     :param dataset_filtered: Anndata object cells x genes
-    :param num_patterns: the number of the patterns to display starting from feature 1.
+    :param num_patterns: the number of the patterns to display starting from feature 1. It can also take a list of ints.
     :param projectionName: index of the projection in dataset_filtered.obsm
     :param UMAPName: index of the UMAP in dataset_filtered.obsm
     :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
-    for i in range(num_patterns):
-        pattern_matrix = dataset_filtered.obsm[projectionName]
-        feature = pattern_matrix[:, i]
-        plt.title("Feature " + str(i + 1), fontsize=24)
-        plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature, cmap='jet',
-                    s=.5)
-        plt.colorbar()
-        print("Number of nonzero cells " + str(np.count_nonzero(feature)))
-        print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
-        print("Max coefficient " + str(np.max(feature)))
-        print("Average coefficient " + str(np.mean(feature)))
+    if isinstance(num_patterns, list):
+        for i in num_patterns:
+            pattern_matrix = dataset_filtered.obsm[projectionName]
+            feature = pattern_matrix[:, i]
+            plt.title("Feature " + str(i), fontsize=24)
+            plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature,
+                        cmap='jet',
+                        s=.5)
+            plt.colorbar()
+            print("Number of nonzero cells " + str(np.count_nonzero(feature)))
+            print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
+            print("Max coefficient " + str(np.max(feature)))
+            print("Average coefficient " + str(np.mean(feature)))
+            plt.show()
+    else:
+        for i in range(num_patterns):
+            pattern_matrix = dataset_filtered.obsm[projectionName]
+            feature = pattern_matrix[:, i]
+            plt.title("Feature " + str(i + 1), fontsize=24)
+            plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature,
+                        cmap='jet',
+                        s=.5)
+            plt.colorbar()
+            print("Number of nonzero cells " + str(np.count_nonzero(feature)))
+            print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
+            print("Max coefficient " + str(np.max(feature)))
+            print("Average coefficient " + str(np.mean(feature)))
+            plt.show()
+
+
+def featureImportance(dataset_filtered, num_patterns, projectionName):
+    """Shows a bar graph of feature importance/usage as measured by average coefficient.
+
+    :param dataset_filtered: Anndata object cells x genes
+    :param num_patterns: the number of the patterns to display starting from feature 1. It can also take a list of ints.
+    :param projectionName: index of the projection in dataset_filtered.obsm
+    :return:
+    """
+    matcher.sourceIsValid(dataset_filtered)
+    if isinstance(num_patterns, list):
+        importance = []
+        for i in num_patterns:
+            pattern_matrix = dataset_filtered.obsm[projectionName]
+            feature = pattern_matrix[:, i]
+            importance.append(np.mean(feature))
+        plt.bar(num_patterns, importance, tick_label=num_patterns)
+        plt.xlabel('Features')
+        plt.ylabel('Avg. Coefficient')
+        plt.title('Feature Importance as ranked by avg. coefficient')
+        plt.show()
+
+    else:
+        importance2 = []
+        for i in range(num_patterns):
+            pattern_matrix = dataset_filtered.obsm[projectionName]
+            feature = pattern_matrix[:, i]
+            importance2.append(np.mean(feature))
+        plt.bar(range(1, num_patterns+1), importance2, tick_label=range(1, num_patterns+1))
+        plt.tick_params(axis='x', labelsize=6)
+        plt.xlabel('Features')
+        plt.ylabel('Avg. Coefficient')
+        plt.title('Feature Importance as ranked by avg. coefficient', fontsize=24)
         plt.show()
 
 
