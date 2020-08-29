@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import umap
 from scipy import stats
-from scipy.optimize import nnls
+from scipy.optimize import nnls, lsq_linear
 from sklearn import linear_model
 from . import matcher
 
@@ -85,13 +85,15 @@ def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
     matcher.sourceIsValid(patterns_filtered)
     print(patterns_filtered.X.shape[0], "patterns", dataset_filtered.X.T.shape[1], "data")
     pattern_matrix = np.zeros([patterns_filtered.X.shape[0], dataset_filtered.X.T.shape[1]])
-    MSE = 0
     for i in range(dataset_filtered.shape[1]):
-        scip = nnls(patterns_filtered.X.T, dataset_filtered.X.T[:, i])
-        pattern_matrix[:, i] = scip[0]
-        MSE = MSE + scip[1]
-    print(pattern_matrix.shape)
-    print(MSE, "Mean Squared Error")
+        scip = lsq_linear(np.array(patterns_filtered.X.T).astype('double'),
+                          np.array(dataset_filtered.X.T[:, i]).astype('double'),
+                          bounds=(0, 1000),
+                          method='bvls',
+                          lsq_solver='exact')
+        pattern_matrix[:, i] = scip.x
+    # print(pattern_matrix.shape)
+    # print(MSE, "Mean Squared Error")
     dataset_filtered.obsm[projectionName] = np.transpose(pattern_matrix)
 
 
@@ -208,13 +210,14 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
     plt.show()
 
 
-def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
+def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, cmap='viridis'):
     """Creates plots which show the weight of each feature in each cell.
 
     :param dataset_filtered: Anndata object cells x genes
     :param num_patterns: the number of the patterns to display starting from feature 1. It can also take a list of ints.
     :param projectionName: index of the projection in dataset_filtered.obsm
     :param UMAPName: index of the UMAP in dataset_filtered.obsm
+    :param cmap: colormap to use when creating the feature plots
     :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
@@ -224,7 +227,7 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
             feature = pattern_matrix[:, i]
             plt.title("Feature " + str(i), fontsize=24)
             plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature,
-                        cmap='jet',
+                        cmap=cmap,
                         s=.5)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
@@ -238,7 +241,7 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName):
             feature = pattern_matrix[:, i]
             plt.title("Feature " + str(i + 1), fontsize=24)
             plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature,
-                        cmap='jet',
+                        cmap=cmap,
                         s=.5)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
