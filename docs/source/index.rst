@@ -21,8 +21,8 @@ Contents
    :maxdepth: 1
 
    :doc: scProject API <contents>
-   Tutorial <tutorial.ipynb>
-   Vascular Endothelium <vasc_endo.ipynb>
+   :doc: Tutorial <tutorial.ipynb>
+   :doc: Vascular Endothelium <vasc_endo.ipynb>
 
 
 
