@@ -4,7 +4,7 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='scProject',
-    version='1.0.2',
+    version='1.0.3',
     author='Asher Baraban, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='loyalgoff@jhmi.edu',
     scripts=[],
@@ -13,6 +13,6 @@ setup(
     description='Transfer learning framework for single cell gene expression analysis in Python',
     long_description=open('README.md').read(),
     classifiers=[
-        'Development Status :: 3 - Alpha'
+        'Development Status :: 4 - Beta'
     ]
 )

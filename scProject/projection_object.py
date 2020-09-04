@@ -224,7 +224,7 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, cmap=
     if isinstance(num_patterns, list):
         for i in num_patterns:
             pattern_matrix = dataset_filtered.obsm[projectionName]
-            feature = pattern_matrix[:, i]
+            feature = pattern_matrix[:, i-1]
             plt.title("Feature " + str(i), fontsize=24)
             plt.scatter(dataset_filtered.obsm[UMAPName][:, 0], dataset_filtered.obsm[UMAPName][:, 1], c=feature,
                         cmap=cmap,
@@ -284,6 +284,19 @@ def featureImportance(dataset_filtered, num_patterns, projectionName):
         plt.ylabel('Avg. Coefficient')
         plt.title('Feature Importance as ranked by avg. coefficient', fontsize=24)
         plt.show()
+
+
+def importantGenes(patterns_filtered, featureNumber, threshold):
+    """Returns the list of genes that are expressed greater than threshold in the feature.
+
+    :param patterns_filtered: AnnData object features x genes
+    :param featureNumber: Which pattern you want to examine
+    :param threshold: Show genes that are greater than this threshold
+    :return: A list of genes that are expressed above threshold in the pattern
+    """
+    where = np.where(patterns_filtered.X.T[:, featureNumber-1] > threshold)
+    ids = [patterns_filtered.var.index[i] for i in where]
+    return ids
 
 
 def saveProjections(dataset_filtered, datasetFileName):
