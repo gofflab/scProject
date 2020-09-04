@@ -22,6 +22,7 @@ Contents
 
    :doc: scProject API <contents>
    Tutorial <tutorial.ipynb>
+   Vascular Endothelium <vasc_endo.ipynb>
 
 
 
