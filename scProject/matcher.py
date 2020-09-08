@@ -22,6 +22,7 @@ def sourceIsValid(adata):
     except:
         raise SourceTypeError
 
+
 # these are not currently used in scProject
 def getOverlap(adata, patterns=None, idList=None):
     return adata.var.index.intersection(patterns.var.index)
