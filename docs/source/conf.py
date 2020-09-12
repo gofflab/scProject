@@ -25,7 +25,7 @@ copyright = "2020, Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 author = "Asher Baraban, Genevieve Stein-O'Brien, Loyal Goff"
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '1.0.4'
 
 # -- General configuration ---------------------------------------------------
 
