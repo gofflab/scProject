@@ -24,29 +24,40 @@ def sourceIsValid(adata):
 
 
 # these are not currently used in scProject
-def getOverlap(adata, patterns=None, idList=None):
-    return adata.var.index.intersection(patterns.var.index)
+def getOverlap(dataset, patterns):
+    """ Convenience function for overlap of genes
+
+    :param dataset: Anndata object cells x genes
+    :param patterns: Anndata object features x genes
+    :return: Overlap of genes
+    """
+    return dataset.var.index.intersection(patterns.var.index)
 
 
-def filterSource(adata, overlap):
-    adata_filtered = adata[:, overlap]
-    assert adata_filtered.shape[1] > 0
-    return adata_filtered
+def filterSource(dataset, overlap):
+    """ Convenience function for using an inputted set of genes
+
+    :param dataset: Anndata object cells x genes
+    :param overlap: list-like of genes
+    :return: Filtered dataset (AnnData)
+    """
+    dataset_filtered = dataset[:, overlap]
+    assert dataset_filtered.shape[1] > 0
+    return dataset_filtered
 
 
 def filterPatterns(patterns, overlap):
+    """ Convenience function for using an inputted set of genes
+
+    :param patterns: Anndata object features x genes
+    :param overlap: list-like of genes
+    :return: Filtered patterns (AnnData)
+    """
     patterns_filtered = patterns[:, overlap]
     assert patterns_filtered.shape[1] > 0
     return patterns_filtered
 
 
-# Parameters
-# adata : AnnData object
-# cellTypeColumnName : index of the cell types in .obs
-# Return-void
-# Purpose of the Method:
-# This method performs an elastic net regression from Sklearn. The "discovered" pattern matrix is stored in
-# the dataset_filtered.obsm under the paramater projectionName
 def mapCellNamesToInts(adata, cellTypeColumnName):
     """Maps each cell type to an integer. This is used as a helper for coloring plots
 
@@ -59,3 +70,24 @@ def mapCellNamesToInts(adata, cellTypeColumnName):
     dictionary = dict(zipper)
     new_obs = adata.obs[cellTypeColumnName].replace(dictionary)
     return new_obs
+
+
+def filterAnnDatas(dataset, patterns, geneColumnName):
+    """ This method filters the patterns and the dataset to only include overlapping genes
+
+    :param dataset: Anndata object cells x genes
+    :type dataset: AnnData object
+    :param patterns: Anndata object features x genes
+    :param geneColumnName: index for where the gene names are kept in .var
+    :return: A tuple of two filtered AnnData objects
+    """
+
+    sourceIsValid(dataset)  # Make sure dataset is an AnnData object
+    sourceIsValid(patterns)  # Make sure patterns is an AnnData object
+    dataset.var = dataset.var.set_index(geneColumnName)
+    overlap = dataset.var.index.intersection(patterns.var.index)
+    dataset_filtered = dataset[:, overlap]
+    print(dataset_filtered.shape, "dataset filter shape")
+    patterns_filtered = patterns[:, overlap]
+    print(patterns_filtered.shape, "patterns filter shape")
+    return dataset_filtered, patterns_filtered
