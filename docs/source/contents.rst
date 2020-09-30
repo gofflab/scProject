@@ -1,10 +1,23 @@
 scProject API
 =============
 
+Regression
+==========
 
-.. automodule:: scProject.projection_object
+.. automodule:: scProject.rg
     :members:
 
+Visualization
+=============
+
+.. automodule:: scProject.viz
+    :members:
+
+Statistics
+==========
+
+.. automodule:: scProject.stats
+    :members:
 
 Utilities
 =========
