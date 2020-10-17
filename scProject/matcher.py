@@ -4,6 +4,8 @@
 # Feature matching/mapping between source (annData) and target (patterns) datasets
 ##################
 import anndata as ad
+import scanpy as sc
+import numpy as np
 
 
 # class SourceTypeError(AssertionError):
@@ -90,4 +92,22 @@ def filterAnnDatas(dataset, patterns, geneColumnName):
     print(dataset_filtered.shape, "dataset filter shape")
     patterns_filtered = patterns[:, overlap]
     print(patterns_filtered.shape, "patterns filter shape")
+    dataset_filtered.X[dataset_filtered.X < 0] = 0
+    patterns_filtered.X[patterns_filtered.X < 0] = 0
+    return dataset_filtered, patterns_filtered
+
+
+def logTransform(dataset_filtered, patterns_filtered):
+    """Adds a layer called log which is the log transform.
+
+    :param dataset_filtered: Anndata object cells x genes
+    :param patterns_filtered: Anndata object features x genes
+    :return: Log tranform of dataset and patterns.
+    """
+    print(np.mean(dataset_filtered.X))
+    print("VALUE")
+    print(np.sum(patterns_filtered.X))
+    dataset_filtered.layers['log'] = np.log1p(dataset_filtered.X)
+    patterns_filtered.layers['log'] = np.log1p(patterns_filtered.X)
+    print(np.argwhere(np.isnan(dataset_filtered.X)))
     return dataset_filtered, patterns_filtered

@@ -22,17 +22,18 @@ print(dataset.X.shape, "Target shape")
 
 
 dataset_filtered, patterns_filtered = matcher.filterAnnDatas(dataset, patterns, 'gene_id')
+dataset_filtered, patterns_filtered = matcher.logTransform(dataset_filtered, patterns_filtered)
 
-stats.geneSelectivity(patterns_filtered, 'ENSMUSG00000036887', 24)
+# stats.geneSelectivity(patterns_filtered, 'ENSMUSG00000036887', 24)
 # projection_object.geneSelectivity(patterns_filtered, 'ENSMUSG00000036905', 5)
 # projection_object.geneSelectivity(patterns_filtered, 'ENSMUSG00000036896', 6)
-rg.NNLR_ElasticNet(dataset_filtered, patterns_filtered, 'retinaProject', .01, .25)
-stats.geneDriver(dataset_filtered, patterns_filtered, 'ENSMUSG00000036896', "CellType", "Brain Fibroblasts", "retinaProject")
+rg.NNLR_ElasticNet(dataset_filtered, patterns_filtered, 'retinaProject', .01, .001, layer='log')
+# stats.geneDriver(dataset_filtered, patterns_filtered, 'ENSMUSG00000036896', "CellType", "Brain Fibroblasts", "retinaProject")
 
 # projection_object.NNLR_positive_Lasso(dataset_filtered, patterns_filtered, 'retinaProject', 0.005)
 # projection_object.NNLR_LeastSquares(dataset_filtered, patterns_filtered, 'retinaProject')
 viz.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina',
-                                False)
+                                True)
 viz.UMAP_Projection(dataset_filtered, 'CellType', 'retinaProject', 'retinaUMAP', 20)
-stats.featureImportance(dataset_filtered, 80, 'retinaProject')
-viz.featurePlots(dataset_filtered, [21], 'retinaProject', 'retinaUMAP')
+# stats.featureImportance(dataset_filtered, 80, 'retinaProject')
+# viz.featurePlots(dataset_filtered, [21], 'retinaProject', 'retinaUMAP')
