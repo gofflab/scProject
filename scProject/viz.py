@@ -8,9 +8,10 @@ import matplotlib.patches as mpatches
 
 
 def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
-                  plot):
+                  plot, row_cluster=True):
     """This method find the pearson correlation coefficient between every pattern and every cell type
 
+    :param row_cluster: Bool whether to cluster
     :param dataset_filtered: Anndata object cells x genes
     :param patterns_filtered: Anndata object features x genes
     :param cellTypeColumnName: index where the cell types are stored in dataset_filtered.obsm
@@ -40,7 +41,7 @@ def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_c
             pearson_matrix[i][j] = correlation[0]
     dataset_filtered.uns[plotName] = pearson_matrix
     if plot:
-        pearsonViz(dataset_filtered, plotName, cellTypeColumnName)
+        pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster)
 
 
 def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True):
@@ -59,16 +60,22 @@ def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True)
         y_ticks.append('Feature ' + str(i + 1))
 
     # plt.title("Pearson Plot", fontsize=24)
-    sns.set(font_scale=1)
-    cluster = sns.clustermap(dataset_filtered.uns[plotName],
-                             row_cluster=row_cluster,
-                             col_cluster=False,
-                             xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
-                             yticklabels=y_ticks)
-    cluster.ax_heatmap.set_yticklabels(cluster.ax_heatmap.yaxis.get_majorticklabels(), fontsize=5)
-    # cluster.set_yticklabels(cluster.get_yticks(), size=10)
-
-    # plt.tick_params(axis='y', labelsize=15)
+    if row_cluster:
+        sns.set(font_scale=1)
+        cluster = sns.clustermap(dataset_filtered.uns[plotName],
+                                 row_cluster=row_cluster,
+                                 col_cluster=False,
+                                 xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
+                                 yticklabels=y_ticks)
+        cluster.ax_heatmap.set_yticklabels(cluster.ax_heatmap.yaxis.get_majorticklabels(), fontsize=5)
+        # cluster.set_yticklabels(cluster.get_yticks(), size=10)
+        # plt.tick_params(axis='y', labelsize=15)
+    else:
+        plt.title("Pearson Plot", fontsize=24)
+        sns.heatmap(dataset_filtered.uns[plotName],
+                    xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
+                    yticklabels=y_ticks)
+        plt.tick_params(axis='y', labelsize=4)
     plt.show()
 
 
