@@ -43,12 +43,14 @@ def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_c
         pearsonViz(dataset_filtered, plotName, cellTypeColumnName)
 
 
-def pearsonViz(dataset_filtered, plotName, cellTypeColumnName):
+def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True):
     """ Visualize a Pearson Matrix.
+
 
     :param dataset_filtered: Anndata object cells x genes
     :param plotName: Index of pearson matrix to visualize
     :param cellTypeColumnName: index for cell type in dataset_filtered.obsm
+    :param row_cluster: Bool whether to cluster rows or not
     :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
@@ -56,11 +58,17 @@ def pearsonViz(dataset_filtered, plotName, cellTypeColumnName):
     for i in range(dataset_filtered.uns[plotName].shape[0]):
         y_ticks.append('Feature ' + str(i + 1))
 
-    plt.title("Pearson Plot", fontsize=24)
-    sns.heatmap(dataset_filtered.uns[plotName],
-                xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
-                yticklabels=y_ticks)
-    plt.tick_params(axis='y', labelsize=4)
+    # plt.title("Pearson Plot", fontsize=24)
+    sns.set(font_scale=1)
+    cluster = sns.clustermap(dataset_filtered.uns[plotName],
+                             row_cluster=row_cluster,
+                             col_cluster=False,
+                             xticklabels=dataset_filtered.obs[cellTypeColumnName].unique(),
+                             yticklabels=y_ticks)
+    cluster.ax_heatmap.set_yticklabels(cluster.ax_heatmap.yaxis.get_majorticklabels(), fontsize=5)
+    # cluster.set_yticklabels(cluster.get_yticks(), size=10)
+
+    # plt.tick_params(axis='y', labelsize=15)
     plt.show()
 
 
