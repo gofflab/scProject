@@ -22,7 +22,6 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
     if layer is False:
-        print("UH OH")
         model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=True)
         model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
         dataset_filtered.obsm[projectionName] = model.coef_
@@ -82,6 +81,4 @@ def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
                           method='bvls',
                           lsq_solver='exact')
         pattern_matrix[:, i] = scip.x
-    # print(pattern_matrix.shape)
-    # print(MSE, "Mean Squared Error")
     dataset_filtered.obsm[projectionName] = np.transpose(pattern_matrix)

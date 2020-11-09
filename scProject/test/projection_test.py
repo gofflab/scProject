@@ -32,8 +32,9 @@ rg.NNLR_ElasticNet(dataset_filtered, patterns_filtered, 'retinaProject', .01, .0
 
 # projection_object.NNLR_positive_Lasso(dataset_filtered, patterns_filtered, 'retinaProject', 0.005)
 # projection_object.NNLR_LeastSquares(dataset_filtered, patterns_filtered, 'retinaProject')
-viz.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina',
-                                True)
+# viz.pearsonMatrix(dataset_filtered, patterns_filtered, 'CellType', 12, 'retinaProject', 'PearsonRetina',
+#                 True, row_cluster=True)
+print("pearson")
 viz.UMAP_Projection(dataset_filtered, 'CellType', 'retinaProject', 'retinaUMAP', 20)
 # stats.featureImportance(dataset_filtered, 80, 'retinaProject')
 # viz.featurePlots(dataset_filtered, [21], 'retinaProject', 'retinaUMAP')
