@@ -6,6 +6,7 @@
 import anndata as ad
 import scanpy as sc
 import numpy as np
+import pandas as pd
 
 
 # class SourceTypeError(AssertionError):
@@ -98,16 +99,38 @@ def filterAnnDatas(dataset, patterns, geneColumnName):
 
 
 def logTransform(dataset_filtered, patterns_filtered):
-    """Adds a layer called log which is the log transform.
+    """Adds a layer called log to the dataset which is the log transform.
 
     :param dataset_filtered: Anndata object cells x genes
     :param patterns_filtered: Anndata object features x genes
     :return: Log tranform of dataset and patterns.
     """
     print(np.mean(dataset_filtered.X))
-    print("VALUE")
-    print(np.sum(patterns_filtered.X))
     dataset_filtered.layers['log'] = np.log1p(dataset_filtered.X)
-    patterns_filtered.layers['log'] = np.log1p(patterns_filtered.X)
-    print(np.argwhere(np.isnan(dataset_filtered.X)))
-    return dataset_filtered, patterns_filtered
+    print("A layer named 'log' has been added to your filtered dataset")
+    # print(np.argwhere(np.isnan(dataset_filtered.X)))
+    return dataset_filtered
+
+
+def orthologMapper(dataset, biomartFilePath, originalGeneColumn, transformGeneColumn, varName):
+    """Convenience function for mapping genes to their orthologs. Then, use filterAnnDatas.
+
+    :param dataset: dataset to find orthologs
+    :param biomartFilePath: file path of csv from biomart to perform the mapping
+    :param originalGeneColumn: column name in biomart file
+    :param transformGeneColumn: column name in biomart file
+    :param varName: What set of data in .var to transform
+    :return: void, mutates dataset
+    """
+    data = pd.read_csv(biomartFilePath)
+    # This allows us to see duplicates by truncating
+    truncate = [chop.partition('.')[0] for chop in dataset.var.gene_id]
+    # force a bijection i.e. one-to-one and onto both ways by removing all copies of any duplicates
+    sansDup = data.drop_duplicates(subset=[originalGeneColumn], keep=False)
+    sansDup = sansDup.drop_duplicates(subset=[transformGeneColumn], keep=False)
+    # create a dict to perform the mapping
+    mapping = dict(zip(sansDup[originalGeneColumn], sansDup[transformGeneColumn]))
+    # Perform the mapping and set var
+    originaltoTransform = [mapping.get(j, j+"Null") for j in truncate]
+    dataset.var[varName] = originaltoTransform
+
