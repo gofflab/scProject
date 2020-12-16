@@ -73,7 +73,7 @@ def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True,
     for i in range(dataset_filtered.uns[plotName].shape[0]):
         y_ticks.append('Feature ' + str(i + 1))
 
-    if row_cluster:
+    if row_cluster or col_cluster:
         sns.set(font_scale=1)
         cluster = sns.clustermap(dataset_filtered.uns[plotName],
                                  row_cluster=row_cluster,
@@ -92,11 +92,11 @@ def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True,
     if path is None and display is True:
         plt.show()
     if path is not None and display is False:
-        plt.savefig(path, dpi)
+        plt.savefig(path, dpi=dpi)
         plt.close()
     if path is not None and display is True:
         plt.show()
-        plt.savefig(path, dpi)
+        plt.savefig(path, dpi=dpi)
 
 
 def UMAP_Projection(dataset_filtered, cellTypeColumnName, projectionName, UMAPName, n_neighbors, metric='euclidean',
@@ -164,9 +164,9 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
             plt.show()
         if display is True and path is not None:
             plt.show()
-            plt.savefig(path, dpi)
+            plt.savefig(path, dpi=dpi)
         if display is False and path is not None:
-            plt.savefig(path, dpi)
+            plt.savefig(path, dpi=dpi)
             plt.close()
     else:
         subsetted = dataset_filtered[dataset_filtered.obs[cellTypeColumnName].isin(subset)]
@@ -183,15 +183,15 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
         handles = []
         for i in range(numTypes):
             handles.append(mpatches.Patch(color=(sns.color_palette(colorScheme, n_colors=numTypes)[i]),
-                                          label=subsetted.obs['Main_cluster_name'].unique()[i]))
+                                          label=subsetted.obs[cellTypeColumnName].unique()[i]))
         plt.legend(handles=handles, title="Cell Types", fontsize='xx-small', loc='best')
         if display is True and path is None:
             plt.show()
         if display is True and path is not None:
             plt.show()
-            plt.savefig(path, dpi)
+            plt.savefig(path, dpi=dpi)
         if display is False and path is not None:
-            plt.savefig(path, dpi)
+            plt.savefig(path, dpi=dpi)
             plt.close()
 
 
@@ -217,7 +217,8 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsCo
         if obsColumn is None:
             raise ValueError("obsColum cannot be None when filtering")
         data = dataset_filtered[dataset_filtered.obs[obsColumn].isin(subset)]
-        pattern_matrix = data.obsm[UMAPName]
+        pattern_matrix = data.obsm[projectionName]
+        print(pattern_matrix.shape)
     if subset is None:
         pattern_matrix = dataset_filtered.obsm[projectionName]
         data = dataset_filtered
@@ -230,16 +231,13 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsCo
                         s=pointSize)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
-            print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
-            print("Max coefficient " + str(np.max(feature)))
-            print("Average coefficient " + str(np.mean(feature)))
             if path is None:
                 plt.show()
             if path is not None and display is True:
                 plt.show()
-                plt.savefig(path + str(i) + ".png", dpi)
+                plt.savefig(path + str(i) + ".png", dpi=dpi)
             if path is not None and display is False:
-                plt.savefig(path + str(i) + ".png", dpi)
+                plt.savefig(path + str(i) + ".png", dpi=dpi)
                 plt.close()
     else:
         for i in range(num_patterns):
@@ -248,15 +246,12 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsCo
             plt.scatter(data.obsm[UMAPName][:, 0], data.obsm[UMAPName][:, 1], c=feature, cmap=cmap, s=pointSize)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
-            print("Percentage of nonzero cells " + str((np.count_nonzero(feature) / dataset_filtered.shape[0]) * 100))
-            print("Max coefficient " + str(np.max(feature)))
-            print("Average coefficient " + str(np.mean(feature)))
             if path is None:
                 plt.show()
             if path is not None and display is True:
                 plt.show()
-                plt.savefig(path + str(i+1) + ".png", dpi)
+                plt.savefig(path + str(i+1) + ".png", dpi=dpi)
             if path is not None and display is False:
-                plt.savefig(path + str(i+1) + ".png", dpi)
+                plt.savefig(path + str(i+1) + ".png", dpi=dpi)
                 plt.close()
 

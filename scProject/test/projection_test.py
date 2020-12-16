@@ -7,7 +7,7 @@ import pandas as pd
 import scanpy as sc
 import matplotlib.pyplot as plt
 
-
+matcher.orthologMapper()
 # print("Reading patterns...", file=sys.stderr)
 patterns = sc.read_h5ad('patterns_anndata.h5ad')
 print(patterns.X.shape, "patterns shape")
@@ -22,7 +22,7 @@ print(dataset.X.shape, "Target shape")
 
 
 dataset_filtered, patterns_filtered = matcher.filterAnnDatas(dataset, patterns, 'gene_id')
-dataset_filtered, patterns_filtered = matcher.logTransform(dataset_filtered, patterns_filtered)
+dataset_filtered, patterns_filtered = matcher.logTransform(dataset_filtered)
 
 # stats.geneSelectivity(patterns_filtered, 'ENSMUSG00000036887', 24)
 # projection_object.geneSelectivity(patterns_filtered, 'ENSMUSG00000036905', 5)
