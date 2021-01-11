@@ -123,7 +123,7 @@ def HotellingT2(cluster1, cluster2):
     if (cluster1.shape[0] == 0) or (cluster2.shape[0] == 0):
         raise ValueError("Empty Cluster")
     if cluster1.shape[1] != cluster2.shape[1]:
-        raise ValueError("Cluster1 and Cluster2 must have the same number of features (genes) i.e. (same shape[1]")
+        raise ValueError("Cluster1 and Cluster2 must have the same number of features (genes) i.e. same shape[1]")
     dimensionality = cluster1.shape[1]  # of genes = num features = dimensions
     n1 = cluster1.shape[0]
     n2 = cluster2.shape[0]
@@ -145,4 +145,4 @@ def HotellingT2(cluster1, cluster2):
     F = scipy.stats.f(dimensionality, n1 + n1 - dimensionality - 1)
     p_value = 1 - F.cdf(Fval)
     print("T2 Value: " + str(TSquared[0][0]) + " FValue: " + str(Fval[0][0]) + " P-Value: " + str(p_value[0][0]))
-    return Fval, TSquared, p_value
+    return TSquared, Fval, p_value
