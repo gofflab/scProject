@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.stats
 from . import matcher
 
 
@@ -109,3 +110,39 @@ def featureImportance(dataset_filtered, num_patterns, projectionName):
         plt.ylabel('Avg. Coefficient')
         plt.title('Feature Importance as ranked by avg. coefficient', fontsize=24)
         plt.show()
+
+
+def HotellingT2(cluster1, cluster2):
+    """
+    Calculates Hotelling T2 statistic to evaluate significance of
+    difference means using pooled covariance and pseudo-inverse.
+    :param cluster1: Anndata with cluster 1
+    :param cluster2: Anddata with cluster 2
+    :return: Tuple of F value, TSquared, p value
+    """
+    if (cluster1.shape[0] == 0) or (cluster2.shape[0] == 0):
+        raise ValueError("Empty Cluster")
+    if cluster1.shape[1] != cluster2.shape[1]:
+        raise ValueError("Cluster1 and Cluster2 must have the same number of features (genes) i.e. (same shape[1]")
+    dimensionality = cluster1.shape[1]  # of genes = num features = dimensions
+    n1 = cluster1.shape[0]
+    n2 = cluster2.shape[0]
+
+    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+    MeanDiff = (C1Mean - C2Mean)  # *patterns_filtered.X[34, :]
+
+    # covariance matrices and transform to pooled
+    C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
+    C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
+    pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
+    inverse = np.linalg.pinv(pooled * ((1 / n1) + (1 / n2)))
+
+    step1 = np.matmul(MeanDiff, inverse)
+    TSquared = np.matmul(step1, np.transpose(MeanDiff))
+
+    Fval = ((n1 + n2 - dimensionality - 1) / (dimensionality * (n1 + n2 - 2))) * TSquared
+    F = scipy.stats.f(dimensionality, n1 + n1 - dimensionality - 1)
+    p_value = 1 - F.cdf(Fval)
+    print("T2 Value: " + str(TSquared[0][0]) + " FValue: " + str(Fval[0][0]) + " P-Value: " + str(p_value[0][0]))
+    return Fval, TSquared, p_value
