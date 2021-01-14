@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
 from . import matcher
+from scipy.stats import t
+import math
+import pandas as pd
 
 
 def importantGenes(patterns_filtered, featureNumber, threshold):
@@ -146,3 +149,65 @@ def HotellingT2(cluster1, cluster2):
     p_value = 1 - F.cdf(Fval)
     print("T2 Value: " + str(TSquared[0][0]) + " FValue: " + str(Fval[0][0]) + " P-Value: " + str(p_value[0][0]))
     return TSquared, Fval, p_value
+
+
+def featureExpressionSig(cluster1, projectionName, featureNumber, alpha):
+    """ Measure the significance of the mean expression of a feature for a group of cells.
+
+    :param cluster1: AnnData with group of cells in question
+    :param projectionName: Regression to use
+    :param featureNumber: feature-value to use one-indexed
+    :param alpha: Level of significance
+    :return: tuple T and t value at alpha and degrees of freedom cells minus 1
+    """
+    pattern_weights = cluster1.obsm[projectionName][:, featureNumber - 1]
+    mean = np.mean(pattern_weights)
+    T = (mean - 0) / (np.std(pattern_weights) / math.sqrt(pattern_weights.shape[0]))
+    testT = t.ppf(q=alpha, df=(pattern_weights.shape[0] - 1))
+    if T > testT:
+        print("We can reject the null hypothesis that the mean is 0.")
+    else:
+        print("We cannot reject the null hypothesis that the mean is 0.")
+    return T, testT
+
+
+def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName):
+    """
+    Creates Bonferroni corrected Confidence intervals for the difference of the means of cluster1 and cluster2
+    :param cluster1: Anndata containing cluster1 cells
+    :param cluster2: Anndata containing cluster2 cells
+    :param alpha: Confidence value
+    :param varName: What column in var to use for gene names
+    :return: A dataframe of genes as index with their respective confidence intervals in columns low and high.
+    """
+    dimensionality = cluster1.shape[1]
+    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+    MeanDiff = (C1Mean - C2Mean)
+    plusminus = np.zeros((2, MeanDiff.shape[1]))
+    n1 = cluster1.shape[0]
+    n2 = cluster2.shape[0]
+
+    tval = abs(t.ppf(q=(1 - alpha / (2 * dimensionality)), df=n1 + n2 - 2))
+    C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
+    C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
+    pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
+
+    list1 = []
+    for i in range(dimensionality):
+        pooledVar = pooled[i, i]
+        scale = tval * math.sqrt(((1 / n1) + (1 / n2)) * pooledVar)
+        diff = MeanDiff[0, i]
+        plusminus[0, i] = diff - scale
+        plusminus[1, i] = diff + scale
+        if plusminus[0, i] < 0 and plusminus[1, i] < 0:
+            print(cluster1.var[varName][i], plusminus[0, i], plusminus[1, i], diff)
+            gene = cluster1.var[varName][i]
+            list1.append(gene)
+
+        if plusminus[0, i] > 0 and plusminus[1, i] > 0:
+            print(cluster1.var[varName][i], plusminus[0, i], plusminus[1, i], diff)
+            gene = cluster1.var[varName][i]
+            list1.append(gene)
+
+        return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])

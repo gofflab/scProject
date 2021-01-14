@@ -1,5 +1,6 @@
 from . import matcher
 import matplotlib.pyplot as plt
+import matplotlib.colors as clrs
 from scipy import stats
 import numpy as np
 import umap
@@ -195,15 +196,19 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
             plt.close()
 
 
-def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsColumn=None, cmap='viridis', pointSize=.1, subset=None,
+def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, vmin=.00000000001, clip=99.5,
+                 zeroColor='dimgrey', obsColumn=None, cmap='viridis', pointSize=.1, subset=None,
                  path=None, display=True, dpi=300):
     """Creates plots which show the weight of each feature in each cell.
 
+    :param clip: Stops colorbar at the percentile specified [0,100]
+    :param vmin: Min of the colorplot i.e. what to define as zero
+    :param zeroColor: What color the cells below vmin should be colored
     :param dataset_filtered: Anndata object cells x genes
     :param num_patterns: the number of the patterns to display starting from feature 1. It can also take a list of ints.
     :param projectionName: index of the projection in dataset_filtered.obsm
     :param UMAPName: index of the UMAP in dataset_filtered.obsm
-    :param obsColumn: Column in dataset_filtred to use for subsetting
+    :param obsColumn: Column in dataset_filtered to use for subsetting
     :param cmap: colormap to use when creating the feature plots
     :param pointSize: Size of the points on the plots
     :param subset: subset of types in cell type column name to plot
@@ -223,12 +228,13 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsCo
         pattern_matrix = dataset_filtered.obsm[projectionName]
         data = dataset_filtered
     if isinstance(num_patterns, list):
+        colors = plt.get_cmap(cmap)
+        colors.set_under(zeroColor)
         for i in num_patterns:
             feature = pattern_matrix[:, i - 1]
             plt.title("Feature " + str(i), fontsize=24)
             plt.scatter(data.obsm[UMAPName][:, 0], data.obsm[UMAPName][:, 1], c=feature,
-                        cmap=cmap,
-                        s=pointSize)
+                        cmap=colors, vmin=vmin, vmax=np.percentile(feature, clip), s=pointSize)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
             if path is None:
@@ -240,10 +246,13 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, obsCo
                 plt.savefig(path + str(i) + ".png", dpi=dpi)
                 plt.close()
     else:
+        colors = plt.get_cmap(cmap)
+        colors.set_under(zeroColor)
         for i in range(num_patterns):
             feature = pattern_matrix[:, i]
             plt.title("Feature " + str(i + 1), fontsize=24)
-            plt.scatter(data.obsm[UMAPName][:, 0], data.obsm[UMAPName][:, 1], c=feature, cmap=cmap, s=pointSize)
+            plt.scatter(data.obsm[UMAPName][:, 0], data.obsm[UMAPName][:, 1], c=feature, cmap=colors, vmin=vmin,
+                        vmax=np.percentile(feature, clip), s=pointSize)
             plt.colorbar()
             print("Number of nonzero cells " + str(np.count_nonzero(feature)))
             if path is None:

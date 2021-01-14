@@ -99,9 +99,11 @@ def orthologMapper(dataset, biomartFilePath, originalGeneColumn, transformGeneCo
     dataset.var[varName] = originaltoTransform
 
 
-def filterAnnDatas(dataset, patterns, geneColumnName):
+def filterAnnDatas(dataset, patterns, geneColumnName, normalizePatterns=True, normalizeData=False):
     """ This method filters the patterns and the dataset to only include overlapping genes
 
+    :param normalizeData: Whether to normalize dataset postfilter with L1 norm
+    :param normalizePatterns: Whether to normalize patterns postfilter with L1 norm
     :param dataset: Anndata object cells x genes
     :type dataset: AnnData object
     :param patterns: Anndata object features x genes
@@ -123,16 +125,18 @@ def filterAnnDatas(dataset, patterns, geneColumnName):
     if sparse.issparse(patterns_filtered.X):
         patterns_filtered.X = patterns_filtered.X.toarray()
 
-    norm = np.linalg.norm(patterns_filtered.X, axis=1, ord=1, keepdims=True)
-    normalized = patterns_filtered.X / (norm * .2)
-    patterns_filtered.X = normalized
+    if normalizePatterns:
+        norm = np.linalg.norm(patterns_filtered.X, axis=1, ord=1, keepdims=True)
+        normalized = patterns_filtered.X / (norm * .2)
+        patterns_filtered.X = normalized
 
     if sparse.issparse(dataset_filtered.X):
         dataset_filtered.X = dataset_filtered.X.toarray()
 
-    dnorm = np.linalg.norm(dataset_filtered.X, axis=1, ord=1, keepdims=True)
-    dnormalized = dataset_filtered.X / (dnorm * .2)
-    dataset_filtered.X = dnormalized
+    if normalizeData:
+        dnorm = np.linalg.norm(dataset_filtered.X, axis=1, ord=1, keepdims=True)
+        dnormalized = dataset_filtered.X / (dnorm * .2)
+        dataset_filtered.X = dnormalized
     return dataset_filtered, patterns_filtered
 
 
