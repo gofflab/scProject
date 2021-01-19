@@ -145,7 +145,7 @@ def HotellingT2(cluster1, cluster2):
     TSquared = np.matmul(step1, np.transpose(MeanDiff))
 
     Fval = ((n1 + n2 - dimensionality - 1) / (dimensionality * (n1 + n2 - 2))) * TSquared
-    F = scipy.stats.f(dimensionality, n1 + n1 - dimensionality - 1)
+    F = scipy.stats.f(dimensionality, n1 + n2 - dimensionality - 1)
     p_value = 1 - F.cdf(Fval)
     print("T2 Value: " + str(TSquared[0][0]) + " FValue: " + str(Fval[0][0]) + " P-Value: " + str(p_value[0][0]))
     return TSquared, Fval, p_value
@@ -187,27 +187,35 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName):
     plusminus = np.zeros((2, MeanDiff.shape[1]))
     n1 = cluster1.shape[0]
     n2 = cluster2.shape[0]
+    pVal = 1 - alpha
+    boncorrect = pVal / (2 * dimensionality)
+    q = 1 - boncorrect
 
-    tval = abs(t.ppf(q=(1 - alpha / (2 * dimensionality)), df=n1 + n2 - 2))
+    tval = t.ppf(q=q, df=n1 + n2 - 2)
+
     C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
     C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
     pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
 
     list1 = []
+    count = 0
     for i in range(dimensionality):
         pooledVar = pooled[i, i]
         scale = tval * math.sqrt(((1 / n1) + (1 / n2)) * pooledVar)
+
         diff = MeanDiff[0, i]
         plusminus[0, i] = diff - scale
         plusminus[1, i] = diff + scale
         if plusminus[0, i] < 0 and plusminus[1, i] < 0:
-            print(cluster1.var[varName][i], plusminus[0, i], plusminus[1, i], diff)
+            print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+                                                                                 plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
         if plusminus[0, i] > 0 and plusminus[1, i] > 0:
-            print(cluster1.var[varName][i], plusminus[0, i], plusminus[1, i], diff)
+            print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+                                                                                 plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
-        return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
+    return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
