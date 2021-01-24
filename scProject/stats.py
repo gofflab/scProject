@@ -175,9 +175,11 @@ def featureExpressionSig(cluster1, projectionName, featureNumber, alpha, mu=0):
     return T, testT
 
 
-def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=0):
+def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=0, display=True):
     """
     Creates Bonferroni corrected Confidence intervals for the difference of the means of cluster1 and cluster2
+    :param display:
+    :param verbose: Whether to print out genes and CIs or not. 0 for print out. !=0 for no printing.
     :param cluster1: Anndata containing cluster1 cells
     :param cluster2: Anndata containing cluster2 cells
     :param alpha: Confidence value
@@ -224,12 +226,29 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbo
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
-    return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
+    data = pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
+    filt = ((data['High'] > 0) & (data['Low'] > 0)) | ((data['High'] < 0) & (data['Low'] < 0))
+    intersection = data[filt]
+    if display:
+        right = intersection[(intersection['High'] > 0) & (intersection['Low'] > 0)]
+        left = intersection[(intersection['High'] < 0) & (intersection['Low'] < 0)]
+
+        for low, high, y in zip(right['Low'], right['High'], range(len(right))):
+            plt.plot((low, high), (y, y), 'o-', color='blue')
+
+        for low, high, y in zip(left['Low'], left['High'], range(len(right), len(intersection))):
+            plt.plot((low, high), (y, y), 'o-', color='red')
+
+        plt.yticks(range(len(intersection)), list(right.index) + list(left.index))
+        plt.show()
+
+    return data
 
 
-def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, featureNumber):
+def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, featureNumber, display=True):
     """
 
+    :param display: Whether to visualize the CIs of the genes
     :param patterns_filtered: AnnData object features x genes
     :param cluster1: Anndata containing cluster1 cells
     :param cluster2: Anndata containing cluster2 cells
@@ -292,7 +311,7 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
-    standardBon = BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=613)
+    standardBon = BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=613, display=False)
 
     driverBon = pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
 
@@ -303,6 +322,19 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
 
     commonGenes = set(standardBon[filtStand].index).intersection(set(driverBon[filtDriver].index))
     intersection = standardBon.loc[commonGenes]
+    if display:
+        right = intersection[(intersection['High'] > 0) & (intersection['Low'] > 0)]
+        left = intersection[(intersection['High'] < 0) & (intersection['Low'] < 0)]
+
+        for low, high, y in zip(right['Low'], right['High'], range(len(right))):
+            plt.plot((low, high), (y, y), 'o-', color='blue')
+
+        for low, high, y in zip(left['Low'], left['High'], range(len(right), len(intersection))):
+            plt.plot((low, high), (y, y), 'o-', color='red')
+
+        plt.yticks(range(len(intersection)), list(right.index) + list(left.index))
+        plt.show()
+
     return intersection, driverBon, standardBon
 
     # return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
