@@ -259,8 +259,34 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, vmin=
                 plt.show()
             if path is not None and display is True:
                 plt.show()
-                plt.savefig(path + str(i+1) + ".png", dpi=dpi)
+                plt.savefig(path + str(i + 1) + ".png", dpi=dpi)
             if path is not None and display is False:
-                plt.savefig(path + str(i+1) + ".png", dpi=dpi)
+                plt.savefig(path + str(i + 1) + ".png", dpi=dpi)
                 plt.close()
 
+
+def patternWeightDistribution(dataset_filtered, projectionName, patterns, obsColumn, subset, numBins=100):
+    """
+
+    :param dataset_filtered: Anndata object cells x genes
+    :param projectionName:index of the projection in dataset_filtered.obsm
+    :param patterns: Which patterns to visualize (one indexed)
+    :param obsColumn: Column in dataset_filtered to use for subsetting
+    :param subset: What subset of cells in the obsColumn to visualize
+    :param numBins: How many bins in the histogram
+    :return: void displays a histogram of the pattern weights above 0
+    """
+    subset = dataset_filtered[dataset_filtered.obs[obsColumn].isin(list(subset))]
+    print("This subset has shape:", subset.shape)
+
+    for i in patterns:
+        filte = subset.obsm[projectionName][:, i-1] > 0
+        maxval = np.max(subset.obsm[projectionName][:, i-1][filte])
+        if maxval is 0:
+            print("Feature " + str(i) + " is all 0 in this subset")
+            continue
+        bins = np.arange(0, maxval+1, (maxval + 1) / numBins)
+
+        plt.title("Feature " + str(i))
+        plt.hist(subset.obsm[projectionName][:, i-1][filte], bins=bins)
+        plt.show()

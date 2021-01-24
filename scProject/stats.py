@@ -131,6 +131,10 @@ def HotellingT2(cluster1, cluster2):
     n1 = cluster1.shape[0]
     n2 = cluster2.shape[0]
 
+    if n1 + n2 - 2 < dimensionality:
+        raise ValueError("The Hotelling T2 squared statistic is not applicable when the sum of the sample sizes minus "
+                         "2 is less than the dimensionality.")
+
     C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
     C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
     MeanDiff = (C1Mean - C2Mean)  # *patterns_filtered.X[34, :]
@@ -151,7 +155,7 @@ def HotellingT2(cluster1, cluster2):
     return TSquared, Fval, p_value
 
 
-def featureExpressionSig(cluster1, projectionName, featureNumber, alpha):
+def featureExpressionSig(cluster1, projectionName, featureNumber, alpha, mu=0):
     """ Measure the significance of the mean expression of a feature for a group of cells.
 
     :param cluster1: AnnData with group of cells in question
@@ -162,16 +166,16 @@ def featureExpressionSig(cluster1, projectionName, featureNumber, alpha):
     """
     pattern_weights = cluster1.obsm[projectionName][:, featureNumber - 1]
     mean = np.mean(pattern_weights)
-    T = (mean - 0) / (np.std(pattern_weights) / math.sqrt(pattern_weights.shape[0]))
+    T = (mean - mu) / (np.std(pattern_weights) / math.sqrt(pattern_weights.shape[0]))
     testT = t.ppf(q=alpha, df=(pattern_weights.shape[0] - 1))
     if T > testT:
-        print("We can reject the null hypothesis that the mean is 0.")
+        print("We can reject the null hypothesis that the mean is " + str(mu) + ".")
     else:
-        print("We cannot reject the null hypothesis that the mean is 0.")
+        print("We cannot reject the null hypothesis that the mean is " + str(mu) + ".")
     return T, testT
 
 
-def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName):
+def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=0):
     """
     Creates Bonferroni corrected Confidence intervals for the difference of the means of cluster1 and cluster2
     :param cluster1: Anndata containing cluster1 cells
@@ -207,15 +211,98 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName):
         plusminus[0, i] = diff - scale
         plusminus[1, i] = diff + scale
         if plusminus[0, i] < 0 and plusminus[1, i] < 0:
-            print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
-                                                                                 plusminus[0, i], plusminus[1, i]))
+            if verbose is 0:
+                print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+                                                                                     plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
         if plusminus[0, i] > 0 and plusminus[1, i] > 0:
-            print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
-                                                                                 plusminus[0, i], plusminus[1, i]))
+            if verbose is 0:
+                print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+                                                                                     plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
     return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
+
+
+def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, featureNumber):
+    """
+
+    :param patterns_filtered: AnnData object features x genes
+    :param cluster1: Anndata containing cluster1 cells
+    :param cluster2: Anndata containing cluster2 cells
+    :param alpha: Confidence value for the bonferroni confidence intervals
+    :param varName: What column in var to use for gene names
+    :param featureNumber: Which pattern you want to examine
+    :return: Three dataframes. The first is the significant gene drivers. The second is Bonferroni CIs from the weighted
+    mean vector. The third is the standard bonferroni CIs equivalent to calling BonferroniCorrectedDifferenceMeans.
+    """
+
+    if alpha < 0 or alpha > 1:
+        raise ValueError("alpha must be between 0 and 1")
+
+    if (featureNumber > patterns_filtered.shape[0]) or featureNumber < 0:
+        raise ValueError("Invalid feature number. Must be between 0 and " + str(patterns_filtered.shape[0] + "."))
+
+    dimensionality = cluster1.shape[1]
+    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+
+    MeanDiff = (C1Mean - C2Mean)
+    feature = patterns_filtered.X[(featureNumber - 1), :]
+    # construct weighted Mean Difference using specified feature
+    curNorm = np.linalg.norm(feature, ord=1)
+    numNonzero = np.count_nonzero(feature)
+    normalized = feature * (numNonzero / curNorm)
+    drivers = np.multiply(normalized, MeanDiff)
+
+    plusminus = np.zeros((2, drivers.shape[1]))
+    n1 = cluster1.shape[0]
+    n2 = cluster2.shape[0]
+    pVal = 1 - alpha
+    boncorrect = pVal / (2 * dimensionality)
+    q = 1 - boncorrect
+
+    tval = t.ppf(q=q, df=n1 + n2 - 2)
+
+    C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
+    C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
+    pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
+
+    list1 = []
+    count = 0
+    for i in range(dimensionality):
+        pooledVar = pooled[i, i]
+        scale = tval * math.sqrt(((1 / n1) + (1 / n2)) * pooledVar)
+
+        diff = drivers[0, i]
+        plusminus[0, i] = diff - scale
+        plusminus[1, i] = diff + scale
+        if plusminus[0, i] < 0 and plusminus[1, i] < 0:
+            # print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+            #                                                                     plusminus[0, i], plusminus[1, i]))
+            gene = cluster1.var[varName][i]
+            list1.append(gene)
+
+        if plusminus[0, i] > 0 and plusminus[1, i] > 0:
+            # print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
+            #                                                                    plusminus[0, i], plusminus[1, i]))
+            gene = cluster1.var[varName][i]
+            list1.append(gene)
+
+    standardBon = BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=613)
+
+    driverBon = pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
+
+    filtStand = ((standardBon['High'] > 0) & (standardBon['Low'] > 0)) | (
+            (standardBon['High'] < 0) & (standardBon['Low'] < 0))
+    filtDriver = ((driverBon['High'] > 0) & (driverBon['Low'] > 0)) | (
+            (driverBon['High'] < 0) & (driverBon['Low'] < 0))
+
+    commonGenes = set(standardBon[filtStand].index).intersection(set(driverBon[filtDriver].index))
+    intersection = standardBon.loc[commonGenes]
+    return intersection, driverBon, standardBon
+
+    # return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
