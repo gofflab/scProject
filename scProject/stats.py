@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats
 from . import matcher
 from scipy.stats import t
+from scipy.sparse import issparse
 import math
 import pandas as pd
 
@@ -135,8 +136,16 @@ def HotellingT2(cluster1, cluster2):
         raise ValueError("The Hotelling T2 squared statistic is not applicable when the sum of the sample sizes minus "
                          "2 is less than the dimensionality.")
 
-    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
-    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+    if scipy.sparse.issparse(cluster1.X):
+        C1Mean = cluster1.X.mean(axis=0)
+    else:
+        C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+
+    if scipy.sparse.issparse(cluster2.X):
+        C2Mean = cluster2.X.mean(axis=0)
+    else:
+        C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+
     MeanDiff = (C1Mean - C2Mean)  # *patterns_filtered.X[34, :]
 
     # covariance matrices and transform to pooled
@@ -176,19 +185,37 @@ def featureExpressionSig(cluster1, projectionName, featureNumber, alpha, mu=0):
 
 
 def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbose=0, display=True):
-    """
-    Creates Bonferroni corrected Confidence intervals for the difference of the means of cluster1 and cluster2
-    :param display:
-    :param verbose: Whether to print out genes and CIs or not. 0 for print out. !=0 for no printing.
-    :param cluster1: Anndata containing cluster1 cells
-    :param cluster2: Anndata containing cluster2 cells
-    :param alpha: Confidence value
-    :param varName: What column in var to use for gene names
-    :return: A dataframe of genes as index with their respective confidence intervals in columns low and high.
-    """
+    """ Constructs Bonferroni corrected Confidence intervals for the difference of the means of cluster1 and cluster2
+
+       :param display: Whether to display CI visualization
+       :param verbose: Whether to print out genes and CIs or not. 0 for print out. !=0 for no printing.
+       :param cluster1: Anndata containing cluster1 cells
+       :param cluster2: Anndata containing cluster2 cells
+       :param alpha: Confidence value
+       :param varName: What column in var to use for gene names
+       :return: A dataframe of genes as index with their respective confidence intervals in columns low and high.
+       """
     dimensionality = cluster1.shape[1]
-    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
-    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+    # print("weird")
+
+    if issparse(cluster1.X):
+        print("C1 is sparse")
+        C1Mean = cluster1.X.mean(axis=0)
+        C1Dense = cluster1.X.todense()
+    else:
+        print("C1 is dense")
+        C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+
+    if issparse(cluster2.X):
+        print("C2 is sparse")
+        C2Mean = cluster2.X.mean(axis=0)
+        C2Dense = cluster2.X.todense()
+    else:
+        print("C2 is dense")
+        C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+
+    # C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+    # C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
     MeanDiff = (C1Mean - C2Mean)
     plusminus = np.zeros((2, MeanDiff.shape[1]))
     n1 = cluster1.shape[0]
@@ -198,9 +225,15 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbo
     q = 1 - boncorrect
 
     tval = t.ppf(q=q, df=n1 + n2 - 2)
+    if issparse(cluster1.X):
+        C1CovM = np.cov(C1Dense, rowvar=False, bias=False)
+    else:
+        C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
+    if issparse(cluster2.X):
+        C2CovM = np.cov(C2Dense, rowvar=False, bias=False)
+    else:
+        C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
 
-    C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
-    C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
     pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
 
     list1 = []
@@ -266,8 +299,20 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
         raise ValueError("Invalid feature number. Must be between 0 and " + str(patterns_filtered.shape[0] + "."))
 
     dimensionality = cluster1.shape[1]
-    C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
-    C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+    if scipy.sparse.issparse(cluster1.X):
+        C1Mean = cluster1.X.mean(axis=0)
+        C1Dense = cluster1.X.todense()
+    else:
+        C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+
+    if scipy.sparse.issparse(cluster2.X):
+        C2Mean = cluster2.X.mean(axis=0)
+        C2Dense = cluster2.X.todense()
+    else:
+        C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
+
+    # C1Mean = np.mean(cluster1.X, axis=0, keepdims=True)
+    # C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
 
     MeanDiff = (C1Mean - C2Mean)
     feature = patterns_filtered.X[(featureNumber - 1), :]
@@ -285,9 +330,15 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
     q = 1 - boncorrect
 
     tval = t.ppf(q=q, df=n1 + n2 - 2)
+    if scipy.sparse.issparse(cluster1.X):
+        C1CovM = np.cov(C1Dense)
+    else:
+        C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
+    if scipy.sparse.issparse(cluster2.X):
+        C2CovM = np.cov(C2Dense)
+    else:
+        C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
 
-    C1CovM = np.cov(cluster1.X, rowvar=False, bias=False)
-    C2CovM = np.cov(cluster2.X, rowvar=False, bias=False)
     pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
 
     list1 = []

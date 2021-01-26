@@ -4,9 +4,9 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='scProject',
-    version='1.0.9.892',
+    version='1.0.9.8995',
     author='Asher Baraban, Genevieve Stein-O\'Brien, Loyal Goff',
-    author_email='loyalgoff@jhmi.edu',
+    author_email='asher.baraban@wustl.edu',
     scripts=[],
     url="https://github.com/gofflab/scProject",
     license='MIT',
