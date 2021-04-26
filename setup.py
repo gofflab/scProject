@@ -4,7 +4,7 @@ import setuptools
 setup(
     packages=setuptools.find_packages(),
     name='scProject',
-    version='1.0.9.8995',
+    version='1.0.9.8996',
     author='Asher Baraban, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='asher.baraban@wustl.edu',
     scripts=[],

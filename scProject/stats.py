@@ -169,7 +169,7 @@ def featureExpressionSig(cluster1, projectionName, featureNumber, alpha, mu=0):
 
     :param cluster1: AnnData with group of cells in question
     :param projectionName: Regression to use
-    :param featureNumber: feature-value to use one-indexed
+    :param featureNumber: feature-value to use one-index
     :param alpha: Level of significance
     :return: tuple T and t value at alpha and degrees of freedom cells minus 1
     """
@@ -378,10 +378,12 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
         left = intersection[(intersection['High'] < 0) & (intersection['Low'] < 0)]
 
         for low, high, y in zip(right['Low'], right['High'], range(len(right))):
-            plt.plot((low, high), (y, y), 'o-', color='blue')
+            plt.plot((low, high), (y, y), '-', color='blue')
+            plt.plot(((low + high) / 2.0), y, 'o', color='blue')
 
         for low, high, y in zip(left['Low'], left['High'], range(len(right), len(intersection))):
-            plt.plot((low, high), (y, y), 'o-', color='red')
+            plt.plot((low, high), (y, y), '-', color='red')
+            plt.plot(((low + high) / 2.0), y, 'o', color='red')
 
         plt.yticks(range(len(intersection)), list(right.index) + list(left.index))
         plt.show()
