@@ -4,7 +4,7 @@ from sklearn import linear_model
 import numpy as np
 
 
-def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, L1, layer=False, iterations=10000):
+def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, L1, layer=False, iterations=10000, positive=True):
     """ This method performs an elastic net regression from sci-kit learn. Currently it only takes in dense matrices.
 
     :param dataset_filtered: AnnData object cells x genes
@@ -17,18 +17,19 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
     :type L1: double
     :param layer: Layer of dataset to regress on string
     :param iterations: number of iterations while performing the regression
+    :param Whether to restrict coefficient to be non negative
     :return: void, the dataset_filtered is mutated and the projection is stored in dataset_filtered.obsm[projectionName]
     """
     matcher.sourceIsValid(dataset_filtered)
     matcher.sourceIsValid(patterns_filtered)
     if layer is False:
-        model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=True, precompute=True)
+        model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=positive, precompute=True)
         model.fit(patterns_filtered.X.T, dataset_filtered.X.T)
         dataset_filtered.obsm[projectionName] = model.coef_
         print(model.coef_.shape)
     else:
         print("Regressing on " + layer + "layer of dataset_filtered")
-        model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=True, precompute=True)
+        model = linear_model.ElasticNet(alpha=alpha, l1_ratio=L1, max_iter=iterations, positive=positive, precompute=True)
         model.fit(patterns_filtered.X.T, dataset_filtered.layers[layer].T)
         dataset_filtered.obsm[projectionName] = model.coef_
         print(model.coef_.shape)
