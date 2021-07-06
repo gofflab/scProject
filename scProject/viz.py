@@ -290,3 +290,68 @@ def patternWeightDistribution(dataset_filtered, projectionName, patterns, obsCol
         plt.title("Feature " + str(i))
         plt.hist(subset.obsm[projectionName][:, i-1][filte], bins=bins)
         plt.show()
+
+
+def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathForWeight, bonTitle, pathForBon, numGenesToPlot=50):
+    """
+
+    :param projectionDriverOutput: Output from the projectionDriver function
+    :param pointLabel: label for the CI point
+    :param weightTitle: Title for the Weighted CI plot
+    :param pathForWeight: Path for the Weighted CI plot
+    :param bonTitle: Title for the Bon CI plot
+    :param pathForBon: Path for the Bon CI plot
+    :param numGenesToPlot: The number of genes to plot on both plots
+    :return:
+    """
+    sigs = projectionDriverOutput[0].index
+    wCIs = projectionDriverOutput[1].loc[sigs]
+    wCIs['WRank'] = abs(wCIs['Low'] + wCIs['High'])
+    wCIs = wCIs.sort_values(by='WRank', ascending=False)
+    wCIs = wCIs.head(numGenesToPlot)
+
+    zipperWeighted = zip(list(wCIs.index), wCIs['Low'], wCIs['High'])
+
+    counter = len(wCIs) - 1
+    genes = []
+    for geneName, low, high in zipperWeighted:
+        genes.insert(0, geneName)
+        plt.plot((low, high), (counter, counter), '-', color='blue')
+        if counter is 1:
+            plt.plot((float(low + high) / 2.0), counter, 'o', color='blue', label=pointLabel)
+        else:
+            plt.plot((float(low + high) / 2.0), counter, 'o', color='blue')
+        counter -= 1
+
+    plt.title(weightTitle)
+    plt.plot((0, 0), (0, numGenesToPlot), '--', color='black')
+    plt.ylim(top=numGenesToPlot)
+    plt.ylim(bottom=-1)
+    plt.legend()
+    plt.yticks(range(len(genes)), genes)
+    plt.savefig(pathForWeight, dpi=300, bbox_inches='tight')
+    plt.show()
+
+    bCIs = projectionDriverOutput[2].loc[wCIs.index]
+
+    zipperBCI = zip(list(bCIs.index), bCIs['Low'], bCIs['High'])
+
+    counter = len(wCIs) - 1
+    genes = []
+    for geneName, low, high in zipperBCI:
+        genes.insert(0, geneName)
+        plt.plot((low, high), (counter, counter), '-', color='blue')
+        if counter is 1:
+            plt.plot((float(low + high) / 2.0), counter, 'o', color='blue', label=pointLabel)
+        else:
+            plt.plot((float(low + high) / 2.0), counter, 'o', color='blue')
+        counter -= 1
+
+    plt.title(bonTitle)
+    plt.plot((0, 0), (0, numGenesToPlot), '--', color='black')
+    plt.ylim(top=numGenesToPlot)
+    plt.ylim(bottom=-1)
+    plt.legend()
+    plt.yticks(range(len(genes)), genes)
+    plt.savefig(pathForBon, dpi=300, bbox_inches='tight')
+    plt.show()

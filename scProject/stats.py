@@ -278,16 +278,23 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbo
     return data
 
 
-def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, featureNumber, display=True):
-    """
+def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, featureNumber, display=True,
+                     num_annotated=25, path=None, titleFontsize=25, axisFontsize=25, pointSize=3, annotationSize=25):
+    """Assumes patterns_filtered and dataset_filtered have the same index.
 
-    :param display: Whether to visualize the CIs of the genes
     :param patterns_filtered: AnnData object features x genes
     :param cluster1: Anndata containing cluster1 cells
     :param cluster2: Anndata containing cluster2 cells
     :param alpha: Confidence value for the bonferroni confidence intervals
     :param varName: What column in var to use for gene names
     :param featureNumber: Which pattern you want to examine
+    :param display: Whether to visualize or not
+    :param num_annotated: number of genes to annotate
+    :param path: Path to save the visualization
+    :param titleFontsize: fontsize of the title
+    :param axisFontsize: fontsize of the axis labels
+    :param pointSize: size of the points
+    :param annotationSize: Size of the annotations for the top ranked genes
     :return: Three dataframes. The first is the significant gene drivers. The second is Bonferroni CIs from the weighted
     mean vector. The third is the standard bonferroni CIs equivalent to calling BonferroniCorrectedDifferenceMeans.
     """
@@ -315,12 +322,14 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
     # C2Mean = np.mean(cluster2.X, axis=0, keepdims=True)
 
     MeanDiff = (C1Mean - C2Mean)
-    feature = patterns_filtered.X[(featureNumber - 1), :]
+    feature = patterns_filtered[(featureNumber - 1)].copy()
     # construct weighted Mean Difference using specified feature
-    curNorm = np.linalg.norm(feature, ord=1)
-    numNonzero = np.count_nonzero(feature)
-    normalized = feature * (numNonzero / curNorm)
-    drivers = np.multiply(normalized, MeanDiff)
+    curNorm = np.linalg.norm(np.reshape(feature.X, -1), ord=1)
+    numNonzero = np.count_nonzero(feature.X)
+    normalized = feature.X * (numNonzero / curNorm)
+    drivers = np.multiply(np.reshape(normalized, -1), np.reshape(MeanDiff, -1))
+    drivers = np.reshape(drivers, (1, 2412))
+    feature.X = normalized
 
     plusminus = np.zeros((2, drivers.shape[1]))
     n1 = cluster1.shape[0]
@@ -373,21 +382,54 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
 
     commonGenes = set(standardBon[filtStand].index).intersection(set(driverBon[filtDriver].index))
     intersection = standardBon.loc[commonGenes]
+
     if display:
-        right = intersection[(intersection['High'] > 0) & (intersection['Low'] > 0)]
-        left = intersection[(intersection['High'] < 0) & (intersection['Low'] < 0)]
+        if path is None:
+            raise ValueError("Path Cannot Be None When Display is True")
+        mapper = dict(zip(cluster1.var.index, cluster1.var['gene_short_name']))
+        geneShorts = [mapper[i] for i in feature.var.index]
+        feature.var.index = geneShorts
 
-        for low, high, y in zip(right['Low'], right['High'], range(len(right))):
-            plt.plot((low, high), (y, y), '-', color='blue')
-            plt.plot(((low + high) / 2.0), y, 'o', color='blue')
+        sigs = intersection.index
 
-        for low, high, y in zip(left['Low'], left['High'], range(len(right), len(intersection))):
-            plt.plot((low, high), (y, y), '-', color='red')
-            plt.plot(((low + high) / 2.0), y, 'o', color='red')
+        scatterWCIs = driverBon.loc[sigs]
+        scatterWCIs['WRank'] = abs(scatterWCIs['Low'] + scatterWCIs['High'])
+        scatterWCIs = scatterWCIs.sort_values(by='WRank', ascending=False)
 
-        plt.yticks(range(len(intersection)), list(right.index) + list(left.index))
-        plt.show()
+        scatterBCIs = standardBon.loc[scatterWCIs.index]
+
+        scatterBCIs['mean'] = (scatterBCIs['Low'] + scatterBCIs['High']) / 2
+        scatterWCIs['mean'] = (scatterWCIs['Low'] + scatterWCIs['High']) / 2
+
+        nonDrivers = driverBon.index.difference(sigs)
+
+        sigPatternWeight = feature.to_df().transpose().loc[scatterWCIs.index]
+        nonSigsWeights = feature.to_df().transpose().loc[nonDrivers]
+
+        bonNonDrivers = standardBon.loc[nonDrivers]
+        bonNonDrivers['mean'] = (bonNonDrivers['Low'] + bonNonDrivers['High']) / 2
+        print(nonSigsWeights.shape, bonNonDrivers.shape)
+        plt.scatter(bonNonDrivers['mean'], nonSigsWeights, color='black', s=pointSize)
+        plt.scatter(scatterBCIs['mean'], sigPatternWeight.values, s=pointSize, color='r')
+
+        wrap = zip(scatterBCIs['mean'].head(num_annotated), sigPatternWeight.head(num_annotated).values,
+                   list(scatterBCIs.head(num_annotated).index),
+                   scatterBCIs['Low'].head(num_annotated), scatterBCIs['High'].head(num_annotated))
+
+        x1 = np.array([0, 0])
+        y1 = np.array([0, 30000])
+
+        for mean, patternWeight, txt, low, high in wrap:
+            plt.annotate(txt, (mean, patternWeight + .5), fontsize=annotationSize)
+            plt.plot((low, high), (patternWeight, patternWeight), '-', color='black')
+        plt.plot(x1, y1, color='black')
+        plt.ylim(bottom=-.25, top=max(sigPatternWeight.values)[0] + 10)
+        plt.title("Latent Space " + str(featureNumber), fontsize=titleFontsize)
+        plt.xlabel("Log 2 Fold Change", fontsize=axisFontsize)
+        plt.ylabel("L1 Adjusted Pattern Weight", fontsize=axisFontsize)
+        plt.savefig(path)
 
     return intersection, driverBon, standardBon
+
 
     # return pd.DataFrame(np.transpose(plusminus), index=cluster1.var[varName], columns=['Low', 'High'])
