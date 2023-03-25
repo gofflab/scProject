@@ -10,8 +10,12 @@ scProject is a software package that allows biologists to use transfer learning 
 
 Name          | Link
 ------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
+scProject API | Content Cell
+Regression  | Content Cell
+Visualization |
+Statistics    |
+Utilities     |
+Tutorial      |
 
 ## Indices and tables ##
 
