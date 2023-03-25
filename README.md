@@ -10,18 +10,20 @@ scProject is a software package that allows biologists to use transfer learning 
 
 Name          | Link
 ------------- | -------------
-scProject API | Content Cell
-Regression  | Content Cell
-Visualization |
-Statistics    |
-Utilities     |
-Tutorial      |
+scProject API | https://scproject.readthedocs.io/en/master/contents.html
+Regression    | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.rg
+Visualization | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.viz
+Statistics    | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.stats
+Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.matcher
+Tutorial      | https://scproject.readthedocs.io/en/master/tutorial.html
 
 ## Indices and tables ##
 
-First Header  | Second Header
+Name          | Link
 ------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
+Module Index  | https://scproject.readthedocs.io/en/master/py-modindex.html
+Search Page   | https://scproject.readthedocs.io/en/master/search.html
 
-For more information and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).
+## Additional Information ##
+
+For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).
