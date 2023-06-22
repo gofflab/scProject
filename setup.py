@@ -1,9 +1,6 @@
 from setuptools import setup
 import setuptools
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 setup(
     packages=setuptools.find_packages(),
     name='scProject',
@@ -18,6 +15,5 @@ setup(
     long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 4 - Beta'
-    ],
-    install_requires=requirements
+    ]
 )
