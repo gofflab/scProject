@@ -18,9 +18,6 @@ Contents
    Tutorial <tutorial.ipynb>
    :doc: Vascular Endothelium <vasc_endo.ipynb>
 
-
-
-
 Indices and tables
 ==================
 
