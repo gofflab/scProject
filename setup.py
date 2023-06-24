@@ -8,7 +8,7 @@ setup(
     packages=setuptools.find_packages(),
     install_requires=requirements,
     name='scProject-stable',
-    version='1.1.1',
+    version='1.1.2',
     author='Asher Baraban, Charles Shin, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='asher.baraban@wustl.edu, cshin12@jhu.edu',
     scripts=[],

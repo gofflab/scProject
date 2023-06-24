@@ -5,7 +5,7 @@
 ## Overview ##
 
 Transfer learning for gene expression signatures (Python implementation of ProjectR).  
-Current version: 1.1.1 ([PYPI](https://pypi.org/project/scProject-stable/))
+Current version: 1.1.2 ([PYPI](https://pypi.org/project/scProject-stable/))
 
 ## Description ##
 
@@ -45,12 +45,6 @@ Statistics    | https://scproject.readthedocs.io/en/master/contents.html#module-
 Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.matcher
 Tutorial      | https://scproject.readthedocs.io/en/master/tutorial.html
 
-## Indices and tables ##
-
-Name          | Link
-------------- | -------------
-Module Index  | https://scproject.readthedocs.io/en/master/py-modindex.html
-Search Page   | https://scproject.readthedocs.io/en/master/search.html
 
 ## Additional Information ##
 
