@@ -10,7 +10,7 @@ setup(
     name='scProject',
     version='1.1.0',
     author='Asher Baraban, Charles Shin, Genevieve Stein-O\'Brien, Loyal Goff',
-    author_email='asher.baraban@wustl.edu cshin12@jhu.edu',
+    author_email='asher.baraban@wustl.edu, cshin12@jhu.edu',
     scripts=[],
     url="https://github.com/gofflab/scProject",
     license='MIT',
