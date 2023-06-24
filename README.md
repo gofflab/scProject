@@ -1,5 +1,7 @@
 # scProject # 
 
+<img src="https://raw.githubusercontent.com/gofflab/scProject/cleaned/docs/scProject-logo.jpg">
+
 ## Overview ##
 
 Transfer learning for gene expression signatures (Python implementation of ProjectR).  
