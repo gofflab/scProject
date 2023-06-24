@@ -1,2 +1,4 @@
 v0.1.0, April 9, 2019
  -- Initial release.
+v1.1.0 June 25, 2023
+ -- Stable release.
