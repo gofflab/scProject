@@ -6,6 +6,7 @@ from scipy.stats import t
 from scipy.sparse import issparse
 import math
 import pandas as pd
+import os
 
 
 def importantGenes(patterns_filtered, featureNumber, threshold):
@@ -237,7 +238,7 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbo
     pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
 
     list1 = []
-    count = 0
+
     for i in range(dimensionality):
         pooledVar = pooled[i, i]
         scale = tval * math.sqrt(((1 / n1) + (1 / n2)) * pooledVar)
@@ -246,14 +247,14 @@ def BonferroniCorrectedDifferenceMeans(cluster1, cluster2, alpha, varName, verbo
         plusminus[0, i] = diff - scale
         plusminus[1, i] = diff + scale
         if plusminus[0, i] < 0 and plusminus[1, i] < 0:
-            if verbose is 0:
+            if verbose == 0:
                 print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
                                                                                      plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
             list1.append(gene)
 
         if plusminus[0, i] > 0 and plusminus[1, i] > 0:
-            if verbose is 0:
+            if verbose == 0:
                 print('Gene Name: {0} Mean Difference: {1} Low: {2} High {3}'.format(cluster1.var[varName][i], diff,
                                                                                      plusminus[0, i], plusminus[1, i]))
             gene = cluster1.var[varName][i]
@@ -328,7 +329,7 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
     numNonzero = np.count_nonzero(feature.X)
     normalized = feature.X * (numNonzero / curNorm)
     drivers = np.multiply(np.reshape(normalized, -1), np.reshape(MeanDiff, -1))
-    drivers = np.reshape(drivers, (1, 2412))
+    drivers = np.reshape(drivers, (1, drivers.shape[0]))
     feature.X = normalized
 
     plusminus = np.zeros((2, drivers.shape[1]))
@@ -351,7 +352,7 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
     pooled = ((n1 - 1) * C1CovM + (n2 - 1) * C2CovM) / (n1 + n2 - 2)
 
     list1 = []
-    count = 0
+
     for i in range(dimensionality):
         pooledVar = pooled[i, i]
         scale = tval * math.sqrt(((1 / n1) + (1 / n2)) * pooledVar)
@@ -381,7 +382,7 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
             (driverBon['High'] < 0) & (driverBon['Low'] < 0))
 
     commonGenes = set(standardBon[filtStand].index).intersection(set(driverBon[filtDriver].index))
-    intersection = standardBon.loc[commonGenes]
+    intersection = standardBon.loc[list(commonGenes)]
 
     if display:
         if path is None:
@@ -427,6 +428,11 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
         plt.title("Latent Space " + str(featureNumber), fontsize=titleFontsize)
         plt.xlabel("Log 2 Fold Change", fontsize=axisFontsize)
         plt.ylabel("L1 Adjusted Pattern Weight", fontsize=axisFontsize)
+        # Directory path and filename
+        directory = os.path.dirname(path)
+        # Create the directory if it doesn't exist
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         plt.savefig(path)
 
     return intersection, driverBon, standardBon

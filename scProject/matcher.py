@@ -8,6 +8,7 @@ import scanpy as sc
 import numpy as np
 from scipy import sparse
 import pandas as pd
+import copy
 
 
 # class SourceTypeError(AssertionError):
@@ -115,9 +116,9 @@ def filterAnnDatas(dataset, patterns, geneColumnName, normalizePatterns=True, no
     sourceIsValid(patterns)  # Make sure patterns is an AnnData object
     dataset.var = dataset.var.set_index(geneColumnName)
     overlap = dataset.var.index.intersection(patterns.var.index)
-    dataset_filtered = dataset[:, overlap]
+    dataset_filtered = dataset[:, overlap].copy()
     print(dataset_filtered.shape, "dataset filter shape")
-    patterns_filtered = patterns[:, overlap]
+    patterns_filtered = patterns[:, overlap].copy()
     print(patterns_filtered.shape, "patterns filter shape")
     dataset_filtered.X[dataset_filtered.X < 0] = 0
     patterns_filtered.X[patterns_filtered.X < 0] = 0
