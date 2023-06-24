@@ -43,4 +43,4 @@ Tutorial      | https://scproject.readthedocs.io/en/master/tutorial.html
 ## Additional Information ##
 
 For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).  
-If you would like to leave a feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
+If you would like to leave feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
