@@ -2,7 +2,6 @@ scProject
 ==========
 
 .. image:: https://raw.githubusercontent.com/gofflab/scProject/master/docs/scProject-logo.jpg
-  :width: 400
   :alt: Alternative text
 
 Overview
