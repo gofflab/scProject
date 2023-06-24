@@ -6,6 +6,7 @@ import numpy as np
 import umap
 import seaborn as sns
 import matplotlib.patches as mpatches
+import os
 
 
 def pearsonMatrix(dataset_filtered, patterns_filtered, cellTypeColumnName, num_cell_types, projectionName, plotName,
@@ -93,10 +94,18 @@ def pearsonViz(dataset_filtered, plotName, cellTypeColumnName, row_cluster=True,
     if path is None and display is True:
         plt.show()
     if path is not None and display is False:
+        # Create the directory if it doesn't exist
+        directory = os.path.dirname(path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         plt.savefig(path, dpi=dpi)
         plt.close()
     if path is not None and display is True:
         plt.show()
+        # Create the directory if it doesn't exist
+        directory = os.path.dirname(path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         plt.savefig(path, dpi=dpi)
 
 
@@ -165,8 +174,16 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
             plt.show()
         if display is True and path is not None:
             plt.show()
+            # Create the directory if it doesn't exist
+            directory = os.path.dirname(path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             plt.savefig(path, dpi=dpi)
         if display is False and path is not None:
+            # Create the directory if it doesn't exist
+            directory = os.path.dirname(path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             plt.savefig(path, dpi=dpi)
             plt.close()
     else:
@@ -190,8 +207,16 @@ def UMAP_Viz(dataset_filtered, UMAPName, cellTypeColumnName, colorScheme='Paired
             plt.show()
         if display is True and path is not None:
             plt.show()
+            # Create the directory if it doesn't exist
+            directory = os.path.dirname(path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             plt.savefig(path, dpi=dpi)
         if display is False and path is not None:
+            # Create the directory if it doesn't exist
+            directory = os.path.dirname(path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             plt.savefig(path, dpi=dpi)
             plt.close()
 
@@ -241,8 +266,16 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, vmin=
                 plt.show()
             if path is not None and display is True:
                 plt.show()
+                # Create the directory if it doesn't exist
+                directory = os.path.dirname(path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
                 plt.savefig(path + str(i) + ".png", dpi=dpi)
             if path is not None and display is False:
+                # Create the directory if it doesn't exist
+                directory = os.path.dirname(path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
                 plt.savefig(path + str(i) + ".png", dpi=dpi)
                 plt.close()
     else:
@@ -259,8 +292,16 @@ def featurePlots(dataset_filtered, num_patterns, projectionName, UMAPName, vmin=
                 plt.show()
             if path is not None and display is True:
                 plt.show()
+                # Create the directory if it doesn't exist
+                directory = os.path.dirname(path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
                 plt.savefig(path + str(i + 1) + ".png", dpi=dpi)
             if path is not None and display is False:
+                # Create the directory if it doesn't exist
+                directory = os.path.dirname(path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
                 plt.savefig(path + str(i + 1) + ".png", dpi=dpi)
                 plt.close()
 
@@ -282,7 +323,7 @@ def patternWeightDistribution(dataset_filtered, projectionName, patterns, obsCol
     for i in patterns:
         filte = subset.obsm[projectionName][:, i-1] > 0
         maxval = np.max(subset.obsm[projectionName][:, i-1][filte])
-        if maxval is 0:
+        if maxval == 0:
             print("Feature " + str(i) + " is all 0 in this subset")
             continue
         bins = np.arange(0, maxval+1, (maxval + 1) / numBins)
@@ -317,7 +358,7 @@ def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathF
     for geneName, low, high in zipperWeighted:
         genes.insert(0, geneName)
         plt.plot((low, high), (counter, counter), '-', color='blue')
-        if counter is 1:
+        if counter == 1:
             plt.plot((float(low + high) / 2.0), counter, 'o', color='blue', label=pointLabel)
         else:
             plt.plot((float(low + high) / 2.0), counter, 'o', color='blue')
@@ -329,6 +370,10 @@ def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathF
     plt.ylim(bottom=-1)
     plt.legend()
     plt.yticks(range(len(genes)), genes)
+    # Create the directory if it doesn't exist
+    directory = os.path.dirname(pathForWeight)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     plt.savefig(pathForWeight, dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -341,7 +386,7 @@ def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathF
     for geneName, low, high in zipperBCI:
         genes.insert(0, geneName)
         plt.plot((low, high), (counter, counter), '-', color='blue')
-        if counter is 1:
+        if counter == 1:
             plt.plot((float(low + high) / 2.0), counter, 'o', color='blue', label=pointLabel)
         else:
             plt.plot((float(low + high) / 2.0), counter, 'o', color='blue')
@@ -353,5 +398,9 @@ def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathF
     plt.ylim(bottom=-1)
     plt.legend()
     plt.yticks(range(len(genes)), genes)
+    # Create the directory if it doesn't exist
+    directory = os.path.dirname(pathForBon)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     plt.savefig(pathForBon, dpi=300, bbox_inches='tight')
     plt.show()

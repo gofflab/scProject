@@ -7,8 +7,8 @@ import numpy as np
 def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, L1, layer=False, iterations=10000, positive=True):
     """ This method performs an elastic net regression from sci-kit learn. Currently it only takes in dense matrices.
 
-    :param dataset_filtered: AnnData object cells x genes
-    :param patterns_filtered: AnnData object features x genes
+    :param dataset_filtered: AnnData object genes x samples
+    :param patterns_filtered: AnnData object genes x features
     :param projectionName: index of the projection in dataset_filtered.obsm
     :type projectionName: String
     :param alpha: regularization parameter
@@ -39,8 +39,8 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
 def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alpha, layer=False, iterations=10000):
     """This method performs a positive lasso regression from sci-kit learn.
 
-    :param dataset_filtered: AnnData object cells x genes
-    :param patterns_filtered: AnnData object features x genes
+    :param dataset_filtered: AnnData object genes x samples
+    :param patterns_filtered: AnnData object genes x features
     :param projectionName: index of the projection in dataset_filtered.obsm
     :param alpha: regularization parameter
     :param layer: Layer with which to perform the regression
@@ -66,8 +66,8 @@ def NNLR_positive_Lasso(dataset_filtered, patterns_filtered, projectionName, alp
 def NNLR_LeastSquares(dataset_filtered, patterns_filtered, projectionName):
     """This performs a non negative least squares regression using Scipy.
 
-    :param dataset_filtered: AnnData object cells x genes
-    :param patterns_filtered: AnnData object features x genes
+    :param dataset_filtered: AnnData object genes x samples
+    :param patterns_filtered: AnnData object genes x features
     :param projectionName: index of the projection in dataset_filtered.obsm
     :return: void, the dataset_filtered is mutated and the projection is stored in dataset_filtered.obsm[projectionName]
     """
