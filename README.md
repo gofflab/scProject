@@ -21,6 +21,12 @@ scProject package can be installed by the following code:
 pip install scProject-stable
 ```
 
+Currently, the stable version needs to be imported in Python as:
+
+```python
+import scProject
+```
+
 It is recommended to install the package and run the code in a virtual environment (venv). Use the code below to create and activate venv:  
 
 ```python
