@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 setup(
     packages=setuptools.find_packages(),
     install_requires=requirements,
-    name='scProject',
+    name='scProject-stable',
     version='1.1.0',
     author='Asher Baraban, Charles Shin, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='asher.baraban@wustl.edu, cshin12@jhu.edu',
