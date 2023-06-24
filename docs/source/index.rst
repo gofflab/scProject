@@ -17,10 +17,3 @@ Contents
    :doc: scProject API <contents>
    Tutorial <tutorial.ipynb>
    :doc: Vascular Endothelium <vasc_endo.ipynb>
-
-Indices and tables
-==================
-
-* :ref:`modindex`
-* :ref:`search`
-
