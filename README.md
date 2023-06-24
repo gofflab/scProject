@@ -37,8 +37,6 @@ Regression    | https://scproject.readthedocs.io/en/master/contents.html#module-
 Visualization | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.viz
 Statistics    | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.stats
 Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.matcher
-Tutorial      | https://scproject.readthedocs.io/en/master/tutorial.html
-
 
 ## Additional Information ##
 
