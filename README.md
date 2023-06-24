@@ -5,7 +5,7 @@
 ## Overview ##
 
 Transfer learning for gene expression signatures (Python implementation of ProjectR).  
-Current version: 1.1.0. 
+Current version: 1.1.0 ([PYPI] (https://pypi.org/project/scProject-stable/))
 
 ## Description ##
 
