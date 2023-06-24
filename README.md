@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/gofflab/scProject/cleaned/docs/scProject-logo.jpg" width="300">
+
 # scProject # 
 
 ## Overview ##
