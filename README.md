@@ -1,6 +1,6 @@
 # scProject # 
 
-<img src="https://raw.githubusercontent.com/gofflab/scProject/cleaned/docs/scProject-logo.jpg">
+<img src="https://raw.githubusercontent.com/gofflab/scProject/master/docs/scProject-logo.jpg">
 
 ## Overview ##
 
