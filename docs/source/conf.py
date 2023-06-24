@@ -25,7 +25,7 @@ copyright = "2023, Asher Baraban, Charles Shin, Genevieve Stein-O'Brien, Loyal G
 author = "Asher Baraban, Charles Shin, Genevieve Stein-O'Brien, Loyal Goff"
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.2'
+release = '1.1.3'
 
 # -- General configuration ---------------------------------------------------
 

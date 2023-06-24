@@ -8,7 +8,7 @@ setup(
     packages=setuptools.find_packages(),
     install_requires=requirements,
     name='scProject',
-    version='1.1.2',
+    version='1.1.3',
     author='Asher Baraban, Charles Shin, Genevieve Stein-O\'Brien, Loyal Goff',
     author_email='asher.baraban@wustl.edu, cshin12@jhu.edu',
     scripts=[],
