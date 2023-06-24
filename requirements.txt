@@ -71,7 +71,6 @@ requests==2.31.0
 scanpy==1.9.3
 scikit-learn==1.2.2
 scipy==1.10.1
-scProject==1.0.9.8997
 seaborn==0.12.2
 session-info==1.0.0
 six==1.16.0
