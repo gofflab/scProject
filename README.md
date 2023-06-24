@@ -5,6 +5,7 @@
 ## Overview ##
 
 Transfer learning for gene expression signatures (Python implementation of ProjectR).  
+Current version: 1.1.0. 
 
 ## Description ##
 
@@ -17,7 +18,7 @@ scProject leverages scikit-learn’s and scipy’s regression tools to effective
 scProject package can be installed by the following code:  
 
 ```python
-pip install scProject
+pip install scProject-stable
 ```
 
 It is recommended to install the package and run the code in a virtual environment (venv). Use the code below to create and activate venv:  
