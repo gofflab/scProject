@@ -54,4 +54,5 @@ Search Page   | https://scproject.readthedocs.io/en/master/search.html
 
 ## Additional Information ##
 
-For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/). If you would like to leave a feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
+For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).  
+If you would like to leave a feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
