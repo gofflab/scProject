@@ -1,8 +1,12 @@
 from setuptools import setup
 import setuptools
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setup(
     packages=setuptools.find_packages(),
+    install_requires=requirements,
     name='scProject',
     version='1.0.9.8996',
     author='Asher Baraban, Charles Shin, Genevieve Stein-O\'Brien, Loyal Goff',
