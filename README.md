@@ -42,7 +42,7 @@ Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-
 
 <details>
   <summary>
-    Getting NumbaDeprecationWarning from `import scProject`?
+    #### Getting NumbaDeprecationWarning from `import scProject`?
   </summary>  
   <br />
   
