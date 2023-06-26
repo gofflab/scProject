@@ -42,7 +42,7 @@ Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-
 
 <details>
   <summary>
-    #### Getting NumbaDeprecationWarning from `import scProject`?
+    I'm getting NumbaDeprecationWarning from importing scProject in Python. What should I do?
   </summary>  
   <br />
   
