@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/gofflab/scProject/master/docs/scProject-logo.jpg" >
 
-<img alt="PyPI" src="https://img.shields.io/pypi/v/scProject"> [![Downloads](https://static.pepy.tech/personalized-badge/scproject?period=month&units=international_system&left_color=black&right_color=lightgrey&left_text=Downloads)](https://pepy.tech/project/scproject) 
+<img alt="PyPI" src="https://img.shields.io/pypi/v/scProject"> [![Downloads](https://static.pepy.tech/personalized-badge/scproject?period=month&units=international_system&left_color=black&right_color=lightgrey&left_text=Downloads)](https://pepy.tech/project/scproject) <img alt="PyPI - License" src="https://img.shields.io/pypi/l/scProject?color=%237003FF"> <img alt="Read the Docs" src="https://img.shields.io/readthedocs/scproject?color=%230b5394"> 
 
 # scProject # 
 
