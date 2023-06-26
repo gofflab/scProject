@@ -23,6 +23,7 @@ pip install scProject
 
 <details>
   <summary>Getting NumbaDeprecationWarning?</summary>
+
   
   ```python
   NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' 
