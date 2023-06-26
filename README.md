@@ -6,7 +6,7 @@
 
 ## Overview ##
 
-Transfer learning for gene expression signatures.  
+Transfer learning for gene expression signatures in Python.
 
 ## Description ##
 
