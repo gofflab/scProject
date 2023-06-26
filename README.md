@@ -41,7 +41,9 @@ Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-
 ## FAQ
 
 <details>
-  <summary>Getting NumbaDeprecationWarning from `import scProject`?</summary>  
+  <summary>
+    Getting NumbaDeprecationWarning from `import scProject`?
+  </summary>  
   <br />
   
   ```python
