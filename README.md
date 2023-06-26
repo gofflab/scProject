@@ -21,21 +21,6 @@ scProject package can be installed by the following code:
 pip install scProject
 ```
 
-<details>
-  <summary>Getting NumbaDeprecationWarning?</summary>  
-  <br />
-  
-  ```python
-  NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' 
-decorator. The implicit default value for this argument is currently False, but it will be changed to True in 
-Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-
-object-mode-fall-back-behaviour-when-using-jit for details.
-    @numba.jit()
-  ```
-
-  The following error is coming from `umap` package, not `scProject`. Please ignore this warning message.
-</details>
-
 It is recommended to install the package and run the code in a virtual environment (venv). Use the code below to create and activate venv:  
 
 ```python
@@ -52,6 +37,23 @@ Regression    | https://scproject.readthedocs.io/en/master/contents.html#module-
 Visualization | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.viz
 Statistics    | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.stats
 Utilities     | https://scproject.readthedocs.io/en/master/contents.html#module-scProject.matcher
+
+## FAQ
+
+<details>
+  <summary>Getting NumbaDeprecationWarning from `import scProject`?</summary>  
+  <br />
+  
+  ```python
+  NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' 
+decorator. The implicit default value for this argument is currently False, but it will be changed to True in 
+Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-
+object-mode-fall-back-behaviour-when-using-jit for details.
+    @numba.jit()
+  ```
+
+  The following error is coming from `umap` package, not `scProject`. Please ignore this warning message.
+</details>
 
 ## Additional Information ##
 
