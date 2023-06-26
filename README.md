@@ -1,6 +1,7 @@
 <img src="https://raw.githubusercontent.com/gofflab/scProject/master/docs/scProject-logo.jpg" >
 
 <img alt="PyPI" src="https://img.shields.io/pypi/v/scProject">
+<img alt="PyPI - Downloads" src="https://img.shields.io/pypi/:period/scProject">
 
 # scProject # 
 
