@@ -19,8 +19,12 @@ Contents
 
    :doc: scProject API <contents>
 
+Examples
+^^^^^^^^
+
 .. toctree::
    :maxdepth: 1
 
-   :doc: Examples <examples>
+   Tutorial <../../scProject/test/Tutorial.ipynb>
+   Vascular Endothelium Study <../../scProject/test/Vascular_Endothelium.ipynb>
    
