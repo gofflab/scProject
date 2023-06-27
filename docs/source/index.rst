@@ -18,5 +18,9 @@ Contents
    :maxdepth: 1
 
    :doc: scProject API <contents>
-   :doc: Examples <examples/index>
+
+.. toctree::
+   :maxdepth: 1
+
+   :doc: Examples <examples>
    
