@@ -18,4 +18,5 @@ Contents
    :maxdepth: 1
 
    :doc: scProject API <contents>
-   :doc: Examples <examples>
+   :doc: Examples <examples/index>
+   
