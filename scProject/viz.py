@@ -310,7 +310,7 @@ def patternWeightDistribution(dataset_filtered, projectionName, patterns, obsCol
     """
 
     :param dataset_filtered: Anndata object cells x genes
-    :param projectionName:index of the projection in dataset_filtered.obsm
+    :param projectionName: index of the projection in dataset_filtered.obsm
     :param patterns: Which patterns to visualize (one indexed)
     :param obsColumn: Column in dataset_filtered to use for subsetting
     :param subset: What subset of cells in the obsColumn to visualize
@@ -343,7 +343,7 @@ def rankedByWeightedCIViz(projectionDriverOutput, pointLabel, weightTitle, pathF
     :param bonTitle: Title for the Bon CI plot
     :param pathForBon: Path for the Bon CI plot
     :param numGenesToPlot: The number of genes to plot on both plots
-    :return:
+    :return: void
     """
     sigs = projectionDriverOutput[0].index
     wCIs = projectionDriverOutput[1].loc[sigs]
