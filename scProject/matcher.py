@@ -68,7 +68,7 @@ def mapCellNamesToInts(adata, cellTypeColumnName):
 
     :param adata: AnnData object
     :param cellTypeColumnName: index of where cell type is stored in adata.obs
-    :return:
+    :return: void
     """
     print(adata.obs[cellTypeColumnName].unique())
     zipper = zip(adata.obs[cellTypeColumnName].unique(), range(adata.obs[cellTypeColumnName].unique().shape[0]))
