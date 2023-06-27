@@ -7,7 +7,7 @@ Tutorial
 .. toctree::
    :maxdepth: 1
 
-   Tutorial
+   ../../scProject/test/Tutorial
 
 Vascular Endothelium Study
 --------------------
@@ -15,4 +15,4 @@ Vascular Endothelium Study
 .. toctree::
    :maxdepth: 1
 
-   Vascular_Endothelium
+   ../../scProject/test/Vascular_Endothelium
