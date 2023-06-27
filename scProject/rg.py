@@ -17,7 +17,7 @@ def NNLR_ElasticNet(dataset_filtered, patterns_filtered, projectionName, alpha, 
     :type L1: double
     :param layer: Layer of dataset to regress on string
     :param iterations: number of iterations while performing the regression
-    :param Whether to restrict coefficient to be non negative
+    :param positive: Whether to restrict coefficient to be non negative
     :return: void, the dataset_filtered is mutated and the projection is stored in dataset_filtered.obsm[projectionName]
     """
     matcher.sourceIsValid(dataset_filtered)
