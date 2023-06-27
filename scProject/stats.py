@@ -29,7 +29,7 @@ def geneSelectivity(patterns_filtered, geneName, num_pattern, plot=True):
     :param geneName: geneName must be in the format that is in .var
     :param num_pattern: The number of the feature/pattern of interest
     :param plot: boolean, if true plots expression of the gene across all of the patterns.
-    :return:
+    :return: void
     """
 
     array = []
@@ -60,7 +60,7 @@ def geneDriver(dataset_filtered, patterns_filtered, geneName, cellTypeColumnName
     :param cellTypeColumnName: index for cell type in dataset_filtered.obsm
     :param cellType: str celltype in question
     :param projectionName: str projection from which to use the pattern weights
-    :return:
+    :return: void
     """
     array = []
     for i in range(patterns_filtered.shape[1]):
@@ -88,7 +88,7 @@ def featureImportance(dataset_filtered, num_patterns, projectionName):
     :param dataset_filtered: Anndata object cells x genes
     :param num_patterns: the number of the patterns to display starting from feature 1. It can also take a list of ints.
     :param projectionName: index of the projection in dataset_filtered.obsm
-    :return:
+    :return: void
     """
     matcher.sourceIsValid(dataset_filtered)
     if isinstance(num_patterns, list):
@@ -118,9 +118,8 @@ def featureImportance(dataset_filtered, num_patterns, projectionName):
 
 
 def HotellingT2(cluster1, cluster2):
-    """
-    Calculates Hotelling T2 statistic to evaluate significance of
-    difference means using pooled covariance and pseudo-inverse.
+    """Calculates Hotelling T2 statistic to evaluate significance of difference means using pooled covariance and pseudo-inverse.
+    
     :param cluster1: Anndata with cluster 1
     :param cluster2: Anddata with cluster 2
     :return: Tuple of F value, TSquared, p value
@@ -166,7 +165,7 @@ def HotellingT2(cluster1, cluster2):
 
 
 def featureExpressionSig(cluster1, projectionName, featureNumber, alpha, mu=0):
-    """ Measure the significance of the mean expression of a feature for a group of cells.
+    """Measure the significance of the mean expression of a feature for a group of cells.
 
     :param cluster1: AnnData with group of cells in question
     :param projectionName: Regression to use
@@ -296,8 +295,7 @@ def projectionDriver(patterns_filtered, cluster1, cluster2, alpha, varName, feat
     :param axisFontsize: fontsize of the axis labels
     :param pointSize: size of the points
     :param annotationSize: Size of the annotations for the top ranked genes
-    :return: Three dataframes. The first is the significant gene drivers. The second is Bonferroni CIs from the weighted
-    mean vector. The third is the standard bonferroni CIs equivalent to calling BonferroniCorrectedDifferenceMeans.
+    :return: Three dataframes. The first is the significant gene drivers. The second is Bonferroni CIs from the weighted mean vector. The third is the standard bonferroni CIs equivalent to calling BonferroniCorrectedDifferenceMeans.
     """
 
     if alpha < 0 or alpha > 1:
