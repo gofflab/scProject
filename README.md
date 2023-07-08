@@ -62,3 +62,5 @@ object-mode-fall-back-behaviour-when-using-jit for details.
 
 For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).  
 If you would like to leave feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
+
+Copyright © 2022-2023 Goff Lab. All rights reserved.
