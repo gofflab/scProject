@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/gofflab/scProject/master/docs/scProject-logo.jpg" >
 
-<img alt="PyPI" src="https://img.shields.io/pypi/v/scProject"> [![Downloads](https://static.pepy.tech/personalized-badge/scproject?period=month&units=international_system&left_color=black&right_color=lightgrey&left_text=Downloads)](https://pepy.tech/project/scproject) <img alt="PyPI - License" src="https://img.shields.io/pypi/l/scProject?color=%237003FF"> <img alt="Read the Docs" src="https://img.shields.io/readthedocs/scproject?color=%230b5394"> 
+<img alt="PyPI" src="https://img.shields.io/pypi/v/scProject"> [![Downloads](https://static.pepy.tech/personalized-badge/scproject?period=total&units=international_system&left_color=black&right_color=lightgrey&left_text=Downloads)](https://pepy.tech/project/scproject) <img alt="PyPI - License" src="https://img.shields.io/pypi/l/scProject?color=%237003FF"> <img alt="Read the Docs" src="https://img.shields.io/readthedocs/scproject?color=%230b5394"> 
 
 # scProject # 
 
@@ -61,6 +61,6 @@ object-mode-fall-back-behaviour-when-using-jit for details.
 ## Additional Information ##
 
 For more instructions and guidelines, read the [documentation](https://scproject.readthedocs.io/en/master/).  
-If you would like to leave feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu).
+If you would like to leave feedback, please contact [cshin12@jhu.edu](mailto:cshin12@jhu.edu) and [gsteinobrien@jhmi.edu](mailto:gsteinobrien@jhmi.edu).
 
-Copyright © 2022-2023 Goff Lab. All rights reserved.
+Copyright © 2022-2024 Goff Lab, Stein-O'Brien Lab. All rights reserved.

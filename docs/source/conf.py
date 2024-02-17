@@ -21,11 +21,11 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'scProject'
-copyright = "2023, Asher Baraban, Charles Shin, Genevieve Stein-O'Brien, Loyal Goff"
-author = "Asher Baraban, Charles Shin, Genevieve Stein-O'Brien, Loyal Goff"
+copyright = "2022-2024, Asher Baraban, Charles Shin, Loyal Goff, Genevieve Stein-O'Brien"
+author = "Asher Baraban, Charles Shin, Loyal Goff, Genevieve Stein-O'Brien"
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.3'
+release = '1.1.4'
 
 # -- General configuration ---------------------------------------------------
 
